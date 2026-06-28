@@ -12,16 +12,18 @@
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        /* Стили списка */
+        /* Главная шапка */
+        .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        
+        /* Элементы списка */
         .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; background-color: #333; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
+        .avatar { width: 45px; height: 45px; background-color: #333; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; }
         .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
         
         /* Матчи */
-        .match-info { display: flex; flex-direction: column; }
-        .match-time { font-size: 0.8em; color: #888; width: 60px; }
-        .flag { width: 25px; height: 18px; margin-right: 10px; background-size: cover; }
-        
+        .match-time { font-size: 0.85em; color: #888; min-width: 70px; }
+        .flag { width: 25px; height: 18px; margin-right: 10px; border-radius: 2px; }
         .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
@@ -32,15 +34,20 @@
         <div class="tab" onclick="showTab('matches', this)">Матчи</div>
     </div>
 
-    <!-- ГЛАВНАЯ -->
     <div id="home" class="content active">
+        <div class="stats-header">
+            <div>Раунд 4</div>
+            <div style="font-size: 32px; font-weight: bold;">0</div>
+            <div>всего очков</div>
+            <button class="main-button" onclick="showTab('team', document.getElementById('tab-team'))">УПРАВЛЯТЬ КОМАНДОЙ</button>
+        </div>
         <h3>Лучшие игроки</h3>
         <div id="players-list"></div>
         <button id="toggle-btn" class="toggle-btn" onclick="toggleList()">Показать еще</button>
     </div>
 
-    <!-- МАТЧИ -->
     <div id="matches" class="content">
+        <h3>1/16 финала</h3>
         <div id="matches-list"></div>
     </div>
 
@@ -48,24 +55,25 @@
 
     <script>
         const playersData = [
-            { name: "Винисиус Жуниор", pts: 12, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Vin%C3%ADcius_J%C3%BAnior_2022.jpg/100px-Vin%C3%ADcius_J%C3%BAnior_2022.jpg" },
-            { name: "Лионель Месси", pts: 45, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022.jpg/100px-Lionel-Messi-Argentina-2022.jpg" },
-            { name: "Усман Дембеле", pts: 18, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Ousmane_Demb%C3%A9l%C3%A9_2023.jpg/100px-Ousmane_Demb%C3%A9l%C3%A9_2023.jpg" },
-            { name: "Килиан Мбаппе", pts: 32, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Kylian_Mbapp%C3%A9_2022.jpg/100px-Kylian_Mbapp%C3%A9_2022.jpg" },
-            { name: "Эмерик Лапорт", pts: 10, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Aymeric_Laporte_2023.jpg/100px-Aymeric_Laporte_2023.jpg" },
-            { name: "Кевин Де Брюйне", pts: 25, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kevin_De_Bruyne_2023.jpg/100px-Kevin_De_Bruyne_2023.jpg" }
+            { name: "Винисиус Жуниор", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p176297.png" },
+            { name: "Лионель Месси", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
+            { name: "Усман Дембеле", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
+            { name: "Килиан Мбаппе", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
+            { name: "Эмерик Лапорт", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p111180.png" },
+            { name: "Кевин Де Брюйне", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p61366.png" }
         ];
 
         const matchesData = [
-            { date: "29.06.26", time: "20:00", team1: "Бразилия", team2: "Япония" },
-            { date: "29.06.26", time: "23:30", team1: "Германия", team2: "Парагвай" },
-            { date: "30.06.26", time: "04:00", team1: "Нидерланды", team2: "Марокко" }
+            { date: "29.06", time: "20:00", t1: "Бразилия", t2: "Япония" },
+            { date: "29.06", time: "23:30", t1: "Германия", t2: "Парагвай" },
+            { date: "30.06", time: "04:00", t1: "Нидерланды", t2: "Марокко" },
+            { date: "30.06", time: "20:00", t1: "Кот-д'Ивуар", t2: "Норвегия" },
+            { date: "01.07", time: "00:00", t1: "Франция", t2: "Швеция" }
         ];
 
         let expanded = false;
 
         function renderApp() {
-            // Список игроков
             const list = document.getElementById('players-list');
             const displayLimit = expanded ? playersData.length : 3;
             list.innerHTML = playersData.slice(0, displayLimit).map(p => `
@@ -77,13 +85,12 @@
             `).join('');
             document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
 
-            // Список матчей
             document.getElementById('matches-list').innerHTML = matchesData.map(m => `
                 <div class="match-row">
                     <div class="match-time">${m.date}<br>${m.time}</div>
-                    <div class="match-info">
-                        <div>${m.team1}</div>
-                        <div>${m.team2}</div>
+                    <div>
+                        <div style="margin-bottom: 5px;">${m.t1}</div>
+                        <div>${m.t2}</div>
                     </div>
                 </div>
             `).join('');
