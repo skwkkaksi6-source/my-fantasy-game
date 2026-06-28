@@ -18,6 +18,8 @@
         .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
         .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; background-size: cover; background-position: center; flex-shrink: 0; }
         .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
+        .match-time { font-size: 0.8em; color: #888; min-width: 60px; margin-right: 15px; }
+        .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
         
         .field { background: #28a745; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
         .pos-row { display: flex; justify-content: center; gap: 15px; }
@@ -41,6 +43,7 @@
         </div>
         <h3>Лучшие игроки</h3>
         <div id="players-list"></div>
+        <button id="toggle-btn" class="toggle-btn" onclick="toggleList()">Показать еще</button>
     </div>
 
     <div id="team" class="content">
@@ -76,22 +79,49 @@
     </div>
 
     <script>
-        // Игроки для главной
-        const playersData = [{name: "Месси", pts: "45pts"}, {name: "Мбаппе", pts: "32pts"}, {name: "Де Брюйне", pts: "25pts"}];
-        document.getElementById('players-list').innerHTML = playersData.map(p => `
-            <div class="player-row"><div class="avatar"></div><div>${p.name}</div><div class="pts">${p.pts}</div></div>
+        const playersData = [
+            { name: "Винисиус Жуниор", pts: "0pts" }, { name: "Лионель Месси", pts: "0pts" }, 
+            { name: "Усман Дембеле", pts: "0pts" }, { name: "Килиан Мбаппе", pts: "0pts" },
+            { name: "Эмерик Лапорт", pts: "0pts" }, { name: "Кевин Де Брюйне", pts: "0pts" }
+        ];
+        
+        const matchesData = [
+            { d: "29.06", t: "20:00", t1: "Бразилия", t2: "Япония" }, { d: "29.06", t: "23:30", t1: "Германия", t2: "Парагвай" },
+            { d: "30.06", t: "04:00", t1: "Нидерланды", t2: "Марокко" }, { d: "30.06", t: "20:00", t1: "Кот-д'Ивуар", t2: "Норвегия" },
+            { d: "01.07", t: "00:00", t1: "Франция", t2: "Швеция" }, { d: "01.07", t: "04:00", t1: "Мексика", t2: "Эквадор" },
+            { d: "01.07", t: "19:00", t1: "Англия", t2: "ДР Конго" }, { d: "01.07", t: "23:00", t1: "Бельгия", t2: "Сенегал" },
+            { d: "02.07", t: "04:00", t1: "Южная Африка", t2: "Канада" }, { d: "02.07", t: "20:00", t1: "Испания", t2: "США" },
+            { d: "02.07", t: "23:30", t1: "Португалия", t2: "Иран" }, { d: "03.07", t: "04:00", t1: "Аргентина", t2: "Австралия" },
+            { d: "03.07", t: "20:00", t1: "Италия", t2: "Южная Корея" }, { d: "03.07", t: "23:30", t1: "Колумбия", t2: "Швейцария" },
+            { d: "04.07", t: "04:00", t1: "Уругвай", t2: "Хорватия" }, { d: "04.07", t: "20:00", t1: "Бразилия", t2: "Дания" }
+        ];
+
+        let expanded = false;
+        function renderPlayers() {
+            const list = document.getElementById('players-list');
+            const limit = expanded ? playersData.length : 3;
+            list.innerHTML = playersData.slice(0, limit).map(p => `
+                <div class="player-row"><div class="avatar"></div><div>${p.name}</div><div class="pts">${p.pts}</div></div>
+            `).join('');
+            document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
+        }
+
+        document.getElementById('matches-list').innerHTML = matchesData.map(m => `
+            <div class="match-row">
+                <div class="match-time">${m.d}<br>${m.t}</div>
+                <div><div>${m.t1}</div><div style="color: #888;">${m.t2}</div></div>
+            </div>
         `).join('');
 
-        // Полный список матчей
-        const matches = ["Бразилия - Япония", "Германия - Парагвай", "Нидерланды - Марокко", "Кот-д'Ивуар - Норвегия", "Франция - Швеция", "Мексика - Эквадор", "Англия - ДР Конго", "Бельгия - Сенегал", "ЮАР - Канада", "Испания - США", "Португалия - Иран", "Аргентина - Австралия", "Италия - Южная Корея", "Колумбия - Швейцария", "Уругвай - Хорватия", "Бразилия - Дания"];
-        document.getElementById('matches-list').innerHTML = matches.map(m => `<div class="match-row">${m}</div>`).join('');
-
+        function toggleList() { expanded = !expanded; renderPlayers(); }
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
             el.classList.add('active');
         }
+        renderPlayers();
+        Telegram.WebApp.ready();
     </script>
 </body>
 </html>
