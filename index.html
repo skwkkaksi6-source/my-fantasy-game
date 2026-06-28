@@ -12,19 +12,17 @@
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
+        /* Стили компонентов */
         .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        
+        .main-button { background: #4a4af4; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
-        .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
-        
-        .match-time { font-size: 0.8em; color: #888; min-width: 60px; }
-        .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; background-size: cover; background-position: center; flex-shrink: 0; }
         
         /* Стили поля */
-        .field { background: #28a745; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .sub-field { display: flex; justify-content: center; gap: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); }
+        .field { background: #28a745; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
+        .pos-row { display: flex; justify-content: center; gap: 15px; }
+        .sub-field { display: flex; justify-content: center; gap: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); }
+        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -34,105 +32,53 @@
         <div class="tab" onclick="showTab('matches', this)">Матчи</div>
     </div>
 
+    <!-- Вкладка Главная -->
     <div id="home" class="content active">
         <div class="stats-header">
             <div>Раунд 4</div>
             <div style="font-size: 32px; font-weight: bold;">0</div>
-            <div>всего очков</div>
-            <button class="main-button" onclick="showTab('team', document.getElementById('tab-team'))">УПРАВЛЯТЬ КОМАНДОЙ</button>
         </div>
-        <h3>Лучшие игроки</h3>
-        <div id="players-list"></div>
-        <button id="toggle-btn" class="toggle-btn" onclick="toggleList()">Показать еще</button>
+        <button class="main-button" onclick="showTab('team', document.getElementById('tab-team'))">УПРАВЛЯТЬ КОМАНДОЙ</button>
     </div>
 
-    <div id="matches" class="content">
-        <h3>1/16 финала</h3>
-        <div id="matches-list"></div>
-    </div>
-
+    <!-- Вкладка Моя команда -->
     <div id="team" class="content">
         <div class="field">
-            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
-            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
-            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
-            <div class="sub-field" style="grid-column: span 4;">
-                <div class="avatar" style="background: #eee;"></div><div class="avatar" style="background: #eee;"></div>
-                <div class="avatar" style="background: #eee;"></div><div class="avatar" style="background: #eee;"></div>
+            <div class="pos-row"><div class="avatar" style="border: 2px solid white;"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div></div>
+            <div class="sub-field">
+                <div class="avatar" style="background: rgba(255,255,255,0.3);"></div>
+                <div class="avatar" style="background: rgba(255,255,255,0.3);"></div>
+                <div class="avatar" style="background: rgba(255,255,255,0.3);"></div>
+                <div class="avatar" style="background: rgba(255,255,255,0.3);"></div>
             </div>
         </div>
-        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px;">ⓘ Узнайте, как игроки получают очки для вашей команды ></div>
-        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="font-weight: bold; margin-bottom: 10px;">Трансферы</div>
-            <div style="font-size: 0.9em; color: #aaa; margin-bottom: 15px;">Планируете трансферы или собираетесь использовать текущий состав?</div>
-            <div style="color: #7b61ff; cursor: pointer;">См. историю трансферов</div>
+        <div class="info-card" onclick="alert('Функция в разработке')">
+            <span>ⓘ Узнайте, как игроки получают очки</span><span>></span>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="main-button" style="background: #4a4af4; color: white;">ЗАМЕНЫ</button>
-            <button class="main-button" style="background: #4a4af4; color: white;">ТРАНСФЕРЫ</button>
+        <div class="info-card" style="display: block; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 5px;">Трансферы</div>
+            <div style="font-size: 0.8em; color: #888;">Планируете трансферы или используете текущий состав?</div>
+            <div style="color: #7b61ff; margin-top: 10px; cursor: pointer;">См. историю трансферов</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="main-button">ЗАМЕНЫ</button>
+            <button class="main-button">ТРАНСФЕРЫ</button>
         </div>
     </div>
 
+    <!-- Вкладка Матчи -->
+    <div id="matches" class="content"><h3>1/16 финала</h3><div id="matches-list"></div></div>
+
     <script>
-        const playersData = [
-            { name: "Винисиус Жуниор", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
-            { name: "Лионель Месси", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
-            { name: "Усман Дембеле", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
-            { name: "Килиан Мбаппе", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
-            { name: "Эмерик Лапорт", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
-            { name: "Кевин Де Брюйне", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
-        ];
-
-        const matchesData = [
-            { d: "29.06", t: "20:00", t1: "Бразилия", t2: "Япония" },
-            { d: "29.06", t: "23:30", t1: "Германия", t2: "Парагвай" },
-            { d: "30.06", t: "04:00", t1: "Нидерланды", t2: "Марокко" },
-            { d: "30.06", t: "20:00", t1: "Кот-д'Ивуар", t2: "Норвегия" },
-            { d: "01.07", t: "00:00", t1: "Франция", t2: "Швеция" },
-            { d: "01.07", t: "04:00", t1: "Мексика", t2: "Эквадор" },
-            { d: "01.07", t: "19:00", t1: "Англия", t2: "ДР Конго" },
-            { d: "01.07", t: "23:00", t1: "Бельгия", t2: "Сенегал" },
-            { d: "02.07", t: "04:00", t1: "Южная Африка", t2: "Канада" },
-            { d: "02.07", t: "20:00", t1: "Испания", t2: "США" },
-            { d: "02.07", t: "23:30", t1: "Португалия", t2: "Иран" },
-            { d: "03.07", t: "04:00", t1: "Аргентина", t2: "Австралия" },
-            { d: "03.07", t: "20:00", t1: "Италия", t2: "Южная Корея" },
-            { d: "03.07", t: "23:30", t1: "Колумбия", t2: "Швейцария" },
-            { d: "04.07", t: "04:00", t1: "Уругвай", t2: "Хорватия" },
-            { d: "04.07", t: "20:00", t1: "Бразилия", t2: "Дания" }
-        ];
-
-        let expanded = false;
-
-        function renderApp() {
-            const list = document.getElementById('players-list');
-            const displayLimit = expanded ? playersData.length : 3;
-            list.innerHTML = playersData.slice(0, displayLimit).map(p => `
-                <div class="player-row">
-                    <div class="avatar" style="background-image: url('${p.img}')"></div>
-                    <div>${p.name}</div>
-                    <div class="pts">${p.pts}pts</div>
-                </div>
-            `).join('');
-            document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
-
-            document.getElementById('matches-list').innerHTML = matchesData.map(m => `
-                <div class="match-row">
-                    <div class="match-time">${m.d}<br>${m.t}</div>
-                    <div style="flex-grow: 1;"><div>${m.t1}</div><div style="color: #aaa;">${m.t2}</div></div>
-                </div>
-            `).join('');
-        }
-
-        function toggleList() { expanded = !expanded; renderApp(); }
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
             el.classList.add('active');
         }
-
-        renderApp();
         Telegram.WebApp.ready();
     </script>
 </body>
