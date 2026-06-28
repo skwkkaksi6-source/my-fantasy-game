@@ -1,89 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 10px; }
-        .content { display: none; }
-        .active { display: block; }
-        .tab-bar { display: flex; justify-content: space-around; background: #1c1c1e; padding: 10px; position: fixed; bottom: 0; width: 100%; left: 0; }
-        .player-row { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
-        .avatar { width: 30px; height: 30px; border-radius: 50%; background: #555; margin-right: 10px; }
-        .pts { margin-left: auto; color: #7b61ff; }
-        .tour-nav { display: flex; justify-content: space-between; margin: 10px 0; background: #222; padding: 10px; border-radius: 8px; }
-        .tour-item { cursor: pointer; text-align: center; font-size: 12px; }
-        .deadline { text-align: center; font-weight: bold; padding: 10px; background: #1c1c1e; border-radius: 8px; margin-bottom: 10px; }
+        body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; }
+        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; z-index: 10; }
+        .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
+        .tab.active { color: #fff; border-bottom: 2px solid #fff; }
+        .content { display: none; padding: 15px; }
+        .content.active { display: block; }
+        
+        .field { background: #28a745; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
+        .pos-row { display: flex; justify-content: center; gap: 15px; }
+        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; }
+        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .main-button { background: #4a4af4; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        
+        .rounds-row { display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        .r-item { cursor: pointer; padding: 5px 15px; border-radius: 8px; }
+        .r-item.active { background: #4a4af4; }
     </style>
 </head>
 <body>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('home', this)">Главная</div>
+        <div class="tab" onclick="showTab('team', this)">Моя команда</div>
+        <div class="tab" onclick="showTab('matches', this)">Матчи</div>
+    </div>
 
-    <div id="main" class="content active">
-        <h3>Главная</h3>
-        <div class="deadline">До дедлайна: 00:00:00</div>
+    <div id="home" class="content active">
+        <h3>Лучшие игроки</h3>
+        <div id="players-list"></div>
+        <button id="toggle-btn" onclick="toggleList()" style="width:100%; padding:10px; margin-top:10px;">Показать еще</button>
     </div>
 
     <div id="team" class="content">
-        <h3>Моя команда</h3>
-        <div class="tour-nav">
-            <div class="tour-item" onclick="alert('R1')">R1</div>
-            <div class="tour-item" onclick="alert('R2')">R2</div>
-            <div class="tour-item" onclick="alert('R3')">R3</div>
-            <div class="tour-item" onclick="alert('R32')">R32</div>
-            <div class="tour-item" onclick="alert('R16')">R16</div>
+        <div class="field">
+            <div class="pos-row"><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div></div>
         </div>
-        <div id="players-list"></div>
-        <button id="toggle-btn" onclick="toggleList()">Показать еще</button>
+        <div class="info-card"><span>ⓘ Узнайте, как игроки получают очки</span><span>></span></div>
+        <div style="display: flex; gap: 10px;">
+            <button class="main-button">ЗАМЕНЫ</button>
+            <button class="main-button">ТРАНСФЕРЫ</button>
+        </div>
     </div>
 
     <div id="matches" class="content">
-        <h3>Матчи</h3>
+        <div class="rounds-row">
+            <div class="r-item">R2</div><div class="r-item">R3</div>
+            <div class="r-item active">R32</div><div class="r-item">R16</div>
+        </div>
         <div id="matches-list"></div>
     </div>
 
-    <div class="tab-bar">
-        <div onclick="showTab('main', this)">Главная</div>
-        <div onclick="showTab('team', this)">Команда</div>
-        <div onclick="showTab('matches', this)">Матчи</div>
-    </div>
-
     <script>
-        const playersData = [
-            {name: "Месси", pts: "45pts"}, {name: "Мбаппе", pts: "32pts"}, 
-            {name: "Де Брюйне", pts: "25pts"}, {name: "Винисиус", pts: "20pts"}, 
-            {name: "Дембеле", pts: "15pts"}, {name: "Холанд", pts: "12pts"}, 
-            {name: "Салах", pts: "10pts"}, {name: "Кейн", pts: "8pts"}, 
-            {name: "Неймар", pts: "5pts"}, {name: "Гризманн", pts: "3pts"}
-        ];
-        
+        const playersData = [{name: "Месси", pts: "45pts"}, {name: "Мбаппе", pts: "32pts"}, {name: "Де Брюйне", pts: "25pts"}, {name: "Винисиус", pts: "20pts"}, {name: "Дембеле", pts: "15pts"}, {name: "Холанд", pts: "14pts"}, {name: "Сака", pts: "13pts"}, {name: "Ямаль", pts: "12pts"}, {name: "Кейн", pts: "11pts"}, {name: "Мусиала", pts: "10pts"}, {name: "Фернандес", pts: "9pts"}, {name: "Родри", pts: "8pts"}, {name: "Диас", pts: "7pts"}, {name: "Гакпо", pts: "6pts"}, {name: "Салах", pts: "5pts"}];
         let expanded = false;
-        
         function renderPlayers() {
             const list = document.getElementById('players-list');
             const limit = expanded ? playersData.length : 3;
-            list.innerHTML = playersData.slice(0, limit).map(p => 
-                `<div class="player-row"><div class="avatar"></div><div>${p.name}</div><div class="pts">${p.pts}</div></div>`
-            ).join('');
+            list.innerHTML = playersData.slice(0, limit).map(p => `<div style="display:flex; padding:10px; border-bottom:1px solid #333">${p.name}<span style="margin-left:auto">${p.pts}</span></div>`).join('');
             document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
         }
-
         function toggleList() { expanded = !expanded; renderPlayers(); }
+        renderPlayers();
 
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
+            el.classList.add('active');
         }
-
-        const matchesData = [
-            { d: "28.06", t: "22:00", name: "ЮАР — Канада" },
-            { d: "29.06", t: "20:00", name: "Бразилия — Япония" },
-            { d: "29.06", t: "23:30", name: "Германия — Парагвай" }
-        ];
-        
-        document.getElementById('matches-list').innerHTML = matchesData.map(m => 
-            `<div style="padding: 10px; border-bottom: 1px solid #333;">${m.d} ${m.t} - ${m.name}</div>`
-        ).join('');
-
-        renderPlayers();
     </script>
 </body>
 </html>
