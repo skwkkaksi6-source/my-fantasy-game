@@ -12,27 +12,18 @@
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        /* Поле */
-        .field { 
-            background-color: #21873b; 
-            height: 350px; 
-            border-radius: 10px; 
-            position: relative; 
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            padding-top: 20px;
-        }
-        .player-slot { text-align: center; width: 60px; }
-        .player-photo { 
-            width: 50px; height: 50px; background: #ddd; 
-            border-radius: 50%; margin-bottom: 5px; 
-        }
-        .player-name { background: #7b61ff; font-size: 10px; padding: 2px; border-radius: 4px; }
+        .card { background: #2c2c2c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        #timer { font-size: 20px; font-weight: bold; margin-top: 5px; }
         
-        /* Кнопки */
+        /* Поле */
+        .field { background-color: #21873b; height: 300px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
         .btn-container { display: flex; gap: 10px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; background: #7b61ff; color: white; font-weight: bold; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #7b61ff; color: white; font-weight: bold; }
+
+        /* Матчи */
+        .match-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; justify-content: space-between; }
+        .match-time { font-size: 12px; color: #aaa; width: 60px; }
+        .match-teams { flex-grow: 1; margin: 0 15px; }
     </style>
 </head>
 <body>
@@ -42,31 +33,24 @@
         <div class="tab" onclick="showTab('matches')">Матчи</div>
     </div>
 
-    <div id="home" class="content active"><h3>Главная (тут будет дизайн)</h3></div>
+    <div id="home" class="content active">
+        <div class="card">
+            <div>World Cup 2026</div>
+            <div id="timer">00ч : 00м : 00с</div>
+        </div>
+        <div class="card">Лучшие игроки раунда...</div>
+    </div>
 
     <div id="team" class="content">
-        <div class="field">
-            <!-- Пример слотов -->
-            <div class="player-slot"><div class="player-photo"></div><div class="player-name">Игрок</div></div>
-            <div class="player-slot"><div class="player-photo"></div><div class="player-name">Игрок</div></div>
-        </div>
+        <div class="field">Поле с игроками</div>
         <div class="btn-container">
             <button>ЗАМЕНЫ</button>
             <button>ТРАНСФЕРЫ</button>
         </div>
     </div>
 
-    <div id="matches" class="content"><h3>Матчи</h3></div>
-
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-        Telegram.WebApp.ready();
-    </script>
-</body>
-</html>
-
+    <div id="matches" class="content">
+        <div class="card">
+            <div class="match-row"><div class="match-time">22:00</div><div class="match-teams">ЮАР — Канада</div><div>🔔</div></div>
+            <div class="match-row"><div class="match-time">20:00</div>
+            
