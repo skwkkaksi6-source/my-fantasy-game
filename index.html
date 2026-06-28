@@ -3,123 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fantasy 5.1</title>
+<title>WC Fantasy 3.0</title>
 
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:#0b0f14;
-    color:white;
+margin:0;
+font-family:Arial;
+background:#0b0f14;
+color:white;
 }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    padding:14px;
-    background:#111826;
-    position:sticky;
-    top:0;
-    z-index:10;
-    font-weight:bold;
+display:flex;
+justify-content:space-between;
+padding:12px;
+background:#111826;
+position:sticky;
+top:0;
+z-index:10;
 }
 
 .tabs{
-    display:flex;
-    overflow-x:auto;
-    background:#111826;
-    border-bottom:1px solid rgba(255,255,255,0.05);
+display:flex;
+background:#111826;
 }
 
 .tab{
-    padding:10px 14px;
-    color:#aaa;
-    white-space:nowrap;
-    cursor:pointer;
+flex:1;
+text-align:center;
+padding:10px;
+color:#aaa;
+cursor:pointer;
 }
 
 .tab.active{
-    color:#4cd964;
-    border-bottom:2px solid #4cd964;
+color:#4cd964;
+border-bottom:2px solid #4cd964;
 }
 
-.screen{
-    display:none;
-    padding:14px;
-}
-.screen.active{
-    display:block;
-}
+.screen{display:none;padding:12px}
+.screen.active{display:block}
 
 .card{
-    background:#151c26;
-    border-radius:14px;
-    padding:14px;
-    margin-bottom:12px;
+background:#151c26;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
 }
 
-.hero{
-    background:linear-gradient(135deg,#1b2a41,#121826);
-    padding:18px;
-    border-radius:16px;
-    text-align:center;
+.pitch{
+background:linear-gradient(#1f7a3a,#14532d);
+min-height:300px;
+border-radius:12px;
+padding:10px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
 }
 
-.big{
-    font-size:42px;
-    font-weight:bold;
-    color:#4cd964;
+.player{
+background:#111826;
+padding:8px;
+border-radius:10px;
+text-align:center;
+font-size:12px;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:8px 0;
-    border-bottom:1px solid rgba(255,255,255,0.06);
-}
-
-.btn{
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:12px;
-    background:#4cd964;
-    font-weight:bold;
-    color:#0b0f14;
-    margin-top:10px;
-}
-
-/* PLAYER CARD */
-.item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px;
-    border-bottom:1px solid rgba(255,255,255,0.06);
-    gap:10px;
-}
-
-.left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-img{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    object-fit:cover;
-    border:2px solid rgba(255,255,255,0.1);
-}
-
-.small{
-    color:#aaa;
-    font-size:12px;
-}
-
-.price{
-    color:#4cd964;
+.match{
+display:flex;
+justify-content:space-between;
+padding:10px;
+background:#111826;
+margin:6px 0;
+border-radius:10px;
 }
 </style>
 </head>
@@ -127,187 +83,195 @@ img{
 <body>
 
 <div class="header">
-    <div>⚽ Fantasy 5.1</div>
-    <div id="total">0 pts</div>
+<div>⚽ WC Fantasy 3.0</div>
+<div id="total">0 pts</div>
 </div>
 
 <div class="tabs">
-    <div class="tab active" onclick="openTab(0,this)">Главная</div>
-    <div class="tab" onclick="openTab(1,this)">Команда</div>
-    <div class="tab" onclick="openTab(2,this)">Рынок</div>
-    <div class="tab" onclick="openTab(3,this)">Матчи</div>
+<div class="tab active" onclick="openTab(0,this)">Главная</div>
+<div class="tab" onclick="openTab(1,this)">Команда</div>
+<div class="tab" onclick="openTab(2,this)">Матчи</div>
 </div>
 
 <!-- HOME -->
 <div class="screen active">
-
-<div class="card hero">
-    <h3>Очки тура</h3>
-    <div class="big" id="gw">78</div>
-</div>
-
 <div class="card">
-    <h3>Лучшие игроки</h3>
-    <div class="row"><span>Мбаппе</span><b>14</b></div>
-    <div class="row"><span>Месси</span><b>12</b></div>
-    <div class="row"><span>Беллингем</span><b>11</b></div>
+<h3>Очки тура</h3>
+<h1 id="gw">0</h1>
 </div>
-
 </div>
 
 <!-- TEAM -->
 <div class="screen">
-
 <div class="card">
-<h3>Моя команда</h3>
-<div id="team"></div>
-<p>Капитан: <b id="cap">—</b></p>
+<h3>Состав (ЧМ игроки)</h3>
+<div class="pitch" id="pitch"></div>
 </div>
-
-</div>
-
-<!-- MARKET -->
-<div class="screen">
-
-<div class="card">
-<h3>Рынок игроков</h3>
-<div id="market"></div>
-</div>
-
 </div>
 
 <!-- MATCHES -->
 <div class="screen">
-
 <div class="card">
-<h3>Матчи сборных</h3>
-
-<div class="row">🇫🇷 Франция - 🇦🇷 Аргентина <b>LIVE</b></div>
-<div class="row">🇧🇷 Бразилия - 🇩🇪 Германия <b>23:30</b></div>
-<div class="row">🇳🇱 Нидерланды - 🇲🇦 Марокко <b>04:00</b></div>
-
+<h3>Матчи</h3>
+<div id="matches"></div>
 </div>
-
 </div>
 
 <script>
 
-/* PLAYERS WITH IMAGES */
-let players=[
-{
-name:"Mbappé",price:12,pts:14,
-img:"https://cdn.sofifa.net/players/231/747/25_120.png"
-},
-{
-name:"Messi",price:11,pts:12,
-img:"https://cdn.sofifa.net/players/158/023/25_120.png"
-},
-{
-name:"Bellingham",price:10,pts:11,
-img:"https://cdn.sofifa.net/players/253/072/25_120.png"
-},
-{
-name:"Vinícius",price:9,pts:9,
-img:"https://cdn.sofifa.net/players/238/794/25_120.png"
-},
-{
-name:"Haaland",price:13,pts:15,
-img:"https://cdn.sofifa.net/players/239/085/25_120.png"
-}
-];
+const API_KEY = "ВСТАВЬ_КЛЮЧ";
 
-let team=[];
-let captain=null;
+/* ⚽ PLAYER DATABASE (ID SYSTEM) */
+let players = [
+{ id: 44, name:"Mbappé", nation:"France", pts:0 },
+{ id: 47, name:"Griezmann", nation:"France", pts:0 },
+
+{ id: 85, name:"Messi", nation:"Argentina", pts:0 },
+{ id: 92, name:"Álvarez", nation:"Argentina", pts:0 },
+
+{ id: 110, name:"Kane", nation:"England", pts:0 },
+{ id: 115, name:"Bellingham", nation:"England", pts:0 },
+
+{ id: 160, name:"Vinícius", nation:"Brazil", pts:0 },
+{ id: 165, name:"Rodrygo", nation:"Brazil", pts:0 }
+];
 
 /* NAV */
 function openTab(i,el){
-    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-    document.querySelectorAll(".screen")[i].classList.add("active");
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll(".screen")[i].classList.add("active");
 
-    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-    el.classList.add("active");
-
-    render();
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+el.classList.add("active");
 }
 
-/* BUY */
-function buy(i){
-    team.push({...players[i]});
-    render();
+/* ⚽ MATCHES */
+async function getMatches(){
+
+const res = await fetch(
+"https://v3.football.api-sports.io/fixtures?season=2022&league=1",
+{
+headers:{ "x-apisports-key": API_KEY }
+}
+);
+
+const data = await res.json();
+return data.response;
 }
 
-/* SELL */
-function sell(i){
-    team.splice(i,1);
-    render();
+/* ⚽ EVENTS */
+async function getEvents(id){
+
+const res = await fetch(
+`https://v3.football.api-sports.io/fixtures/events?fixture=${id}`,
+{
+headers:{ "x-apisports-key": API_KEY }
+}
+);
+
+const data = await res.json();
+return data.response;
 }
 
-/* CAPTAIN */
-function setCap(name){
-    captain=name;
-    render();
+/* 🧠 ID MATCH (KEY FIX) */
+function isSamePlayer(eventPlayerId, playerId){
+
+return eventPlayerId === playerId;
 }
 
-/* TEAM */
-function renderTeam(){
-    let el=document.getElementById("team");
-    el.innerHTML="";
+/* 📊 MAIN ENGINE 3.0 */
+async function updateFantasy(){
 
-    let total=0;
+let matches = await getMatches();
 
-    team.forEach((p,i)=>{
-        let pts=p.pts;
-        if(captain===p.name) pts*=2;
+/* reset */
+players.forEach(p => p.pts = 0);
 
-        total+=pts;
+let total = 0;
 
-        el.innerHTML+=`
-        <div class="item">
-            <div class="left" onclick="setCap('${p.name}')">
-                <img src="${p.img}">
-                <div>
-                    <b>${p.name}</b><br>
-                    <span class="small">${pts} pts</span>
-                </div>
-            </div>
-            <button onclick="sell(${i})">Sell</button>
-        </div>`;
-    });
+let activeMatches = matches.slice(0,5);
 
-    document.getElementById("total").innerText=total+" pts";
+for(let m of activeMatches){
+
+let events = await getEvents(m.fixture.id);
+
+for(let p of players){
+
+let pts = 0;
+
+events.forEach(e=>{
+
+if(!e.player) return;
+
+/* ⚽ GOAL */
+if(e.type === "Goal" &&
+isSamePlayer(e.player.id, p.id)){
+pts += 4;
 }
 
-/* MARKET */
-function renderMarket(){
-    let el=document.getElementById("market");
-    el.innerHTML="";
-
-    players.forEach((p,i)=>{
-        el.innerHTML+=`
-        <div class="item">
-            <div class="left">
-                <img src="${p.img}">
-                <div>
-                    <b>${p.name}</b><br>
-                    <span class="small">${p.pts} pts</span>
-                </div>
-            </div>
-
-            <div>
-                <div class="price">${p.price}M</div>
-                <button onclick="buy(${i})">Buy</button>
-            </div>
-        </div>`;
-    });
+/* 🟨 CARD */
+if(e.type === "Card" &&
+isSamePlayer(e.player.id, p.id)){
+pts -= 1;
 }
 
-/* INIT */
-function render(){
-    renderTeam();
-    renderMarket();
+/* 🅰 ASSIST */
+if(e.assist &&
+isSamePlayer(e.assist.id, p.id)){
+pts += 3;
 }
 
-render();
+});
+
+p.pts += pts;
+total += pts;
+
+}
+
+}
+
+document.getElementById("total").innerText = total + " pts";
+
+renderPlayers();
+renderMatches(matches);
+
+}
+
+/* 🟩 TEAM */
+function renderPlayers(){
+
+let el=document.getElementById("pitch");
+
+el.innerHTML = players.map(p=>`
+<div class="player">
+${p.name}<br>
+${p.nation}<br>
+<b>${p.pts}</b>
+</div>
+`).join("");
+
+}
+
+/* 📅 MATCHES */
+function renderMatches(matches){
+
+let el=document.getElementById("matches");
+
+el.innerHTML = matches.slice(0,10).map(m=>`
+<div class="match">
+<div>${m.teams.home.name}</div>
+<b>${m.goals.home ?? 0}-${m.goals.away ?? 0}</b>
+<div>${m.teams.away.name}</div>
+</div>
+`).join("");
+
+}
+
+/* 🔁 AUTO UPDATE */
+updateFantasy();
+setInterval(updateFantasy, 30 * 60 * 1000);
+
+renderPlayers();
 
 </script>
 
