@@ -3,45 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Фэнтези Игра</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            font-family: sans-serif;
-            text-align: center;
-            padding: 20px;
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; padding: 10px; }
+        .player-card { 
+            background-color: #2c2c2c; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
         }
-        .container { margin-top: 50px; }
-        button {
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 12px;
-            cursor: pointer;
+        .rating { 
+            background-color: #219653; 
+            padding: 5px 10px; 
+            border-radius: 5px; 
+            font-weight: bold; 
         }
-        h1 { font-size: 24px; }
+        .player-name { font-size: 16px; font-weight: 500; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Моя Фэнтези-команда</h1>
-        <p>Ваши очки: <span id="score">0</span></p>
-        <button onclick="incrementScore()">Тренировать игрока</button>
+    <h3>Мой состав: Астон Вилла</h3>
+    
+    <div class="player-card">
+        <div>
+            <div class="player-name">Pau Cubarsí</div>
+            <small style="color: #aaa;">Защитник</small>
+        </div>
+        <div class="rating">7.4</div>
     </div>
 
-    <script>
-        let score = 0;
-        function incrementScore() {
-            score += 1;
-            document.getElementById('score').innerText = score;
-            // Инициализация WebApp
-            Telegram.WebApp.ready();
-        }
-    </script>
+    <div class="player-card">
+        <div>
+            <div class="player-name">Олли Уоткинс</div>
+            <small style="color: #aaa;">Нападающий</small>
+        </div>
+        <div class="rating">8.1</div>
+    </div>
 </body>
 </html>
-
