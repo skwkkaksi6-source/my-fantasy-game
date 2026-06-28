@@ -3,126 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fantasy 1.0</title>
+<title>Fantasy 2.0</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial;
-    background:#0f0f0f;
+    background:#0b0f14;
     color:white;
 }
 
-/* TOP */
-.topbar{
+/* TOP NAV (SOFASCORE STYLE) */
+.topnav{
     display:flex;
-    justify-content:space-between;
-    padding:14px;
-    background:#181818;
+    overflow-x:auto;
+    white-space:nowrap;
+    background:#111826;
+    padding:10px;
     position:sticky;
     top:0;
+    z-index:10;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.tab{
+    flex:0 0 auto;
+    padding:8px 14px;
+    margin-right:8px;
+    border-radius:20px;
+    font-size:14px;
+    color:#aaa;
+    transition:0.2s;
+    cursor:pointer;
+}
+
+.tab.active{
+    background:#4cd964;
+    color:#0b0f14;
+    font-weight:bold;
 }
 
 /* PAGES */
-.page{display:none;padding:15px;padding-bottom:90px;}
-.page.active{display:block}
+.container{
+    display:flex;
+    width:500%;
+    transition:0.3s ease;
+}
 
-/* CARDS */
+.page{
+    width:100%;
+    padding:14px;
+}
+
+/* CARD */
 .card{
-    background:#1c1c1c;
-    padding:12px;
-    border-radius:12px;
+    background:#151c26;
+    padding:14px;
+    border-radius:14px;
     margin-bottom:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
 }
 
 .hero{
-    background:#222;
+    background:linear-gradient(135deg,#1b2a41,#121826);
     padding:18px;
-    border-radius:14px;
+    border-radius:16px;
     text-align:center;
 }
 
 .big{
     font-size:42px;
     font-weight:bold;
-    margin:10px 0;
-}
-
-/* BUTTON */
-.btn{
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    background:#00c853;
-    color:white;
-    margin-top:10px;
+    color:#4cd964;
 }
 
 /* LIST */
 .row{
     display:flex;
     justify-content:space-between;
-    padding:6px 0;
-    border-bottom:1px solid #333;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-/* FIELD */
-.field{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:8px;
-}
-
-.player{
-    background:#2a2a2a;
-    padding:10px;
-    border-radius:10px;
-    text-align:center;
-}
-
-/* BOTTOM NAV */
-.bottom{
-    position:fixed;
-    bottom:0;
+/* BUTTON */
+.btn{
     width:100%;
-    display:flex;
-    justify-content:space-around;
-    background:#181818;
-    padding:10px 0;
-}
-
-.bottom button{
-    background:none;
+    padding:12px;
     border:none;
-    color:white;
-    font-size:18px;
+    border-radius:12px;
+    background:#4cd964;
+    color:#0b0f14;
+    font-weight:bold;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-    <div>⚽ Fantasy 1.0</div>
-    <div id="totalPts">142 pts</div>
+<!-- TOP TABS -->
+<div class="topnav">
+    <div class="tab active" onclick="go(0,this)">Главная</div>
+    <div class="tab" onclick="go(1,this)">Матчи</div>
+    <div class="tab" onclick="go(2,this)">Команда</div>
+    <div class="tab" onclick="go(3,this)">Лига</div>
+    <div class="tab" onclick="go(4,this)">Профиль</div>
 </div>
 
+<!-- SWIPE CONTAINER -->
+<div class="container" id="container">
+
 <!-- HOME -->
-<div id="home" class="page active">
+<div class="page">
 
 <div class="hero">
     <h3>Очки за тур</h3>
-    <div class="big" id="gwPoints">78</div>
+    <div class="big">78</div>
     <p>Топ 32%</p>
 
-    <button class="btn" onclick="go('team')">Управлять командой</button>
+    <button class="btn">Управлять командой</button>
 </div>
 
 <div class="card">
     <h3>Дедлайн</h3>
     <p>4 июля 23:59</p>
-    <p id="timer">Осталось: ...</p>
+    <p id="timer">Осталось...</p>
 </div>
 
 <div class="card">
@@ -132,38 +137,10 @@ body{
     <div class="row"><span>Беллингем</span><b>11</b></div>
 </div>
 
-<div class="card">
-    <h3>Лучшие за сезон</h3>
-    <div class="row"><span>Холанд</span><b>98</b></div>
-    <div class="row"><span>Мбаппе</span><b>94</b></div>
-    <div class="row"><span>Беллингем</span><b>88</b></div>
-</div>
-
-</div>
-
-<!-- TEAM -->
-<div id="team" class="page">
-
-<div class="card">
-<h3>Моя команда</h3>
-
-<div class="field">
-
-<div class="player">Мбаппе<br><b id="p1">12</b></div>
-<div class="player">Месси<br><b id="p2">15</b></div>
-<div class="player">Винисиус<br><b id="p3">9</b></div>
-<div class="player">Ямаль<br><b id="p4">10</b></div>
-
-</div>
-
-<button class="btn" onclick="transfer()">Случайный трансфер</button>
-
-</div>
-
 </div>
 
 <!-- MATCHES -->
-<div id="matches" class="page">
+<div class="page">
 
 <div class="card">
 <h3>Матчи</h3>
@@ -176,47 +153,82 @@ body{
 
 </div>
 
+<!-- TEAM -->
+<div class="page">
+
+<div class="card">
+<h3>Моя команда</h3>
+
+<div class="row"><span>Мбаппе</span><b>12</b></div>
+<div class="row"><span>Месси</span><b>15</b></div>
+<div class="row"><span>Винисиус</span><b>9</b></div>
+
+<button class="btn">Трансферы</button>
+
+</div>
+
+</div>
+
 <!-- LEAGUE -->
-<div id="league" class="page">
+<div class="page">
 
 <div class="card">
 <h3>Лига</h3>
 
-<div class="row"><span>1. Red Storm</span><b id="l1">34</b></div>
+<div class="row"><span>1. Red Storm</span><b>34</b></div>
 <div class="row"><span>2. Blue Warriors</span><b>31</b></div>
-<div class="row"><span>3. My Team</span><b id="myRank">28</b></div>
+<div class="row"><span>3. My Team</span><b>28</b></div>
 
 </div>
 
 </div>
 
 <!-- PROFILE -->
-<div id="profile" class="page">
+<div class="page">
 
 <div class="card">
 <h3>Профиль</h3>
 <p>Ник: PlayerOne</p>
-<p>Побед: 8</p>
-<p>Поражений: 3</p>
+<p>Победы: 8</p>
+<p>Поражения: 3</p>
 </div>
 
 </div>
 
-<!-- NAV -->
-<div class="bottom">
-    <button onclick="go('home')">🏠</button>
-    <button onclick="go('team')">🧠</button>
-    <button onclick="go('matches')">📅</button>
-    <button onclick="go('league')">🏆</button>
-    <button onclick="go('profile')">👤</button>
 </div>
 
 <script>
 
-function go(page){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(page).classList.add('active');
+let index = 0;
+
+function go(i,el){
+    index = i;
+
+    document.getElementById("container").style.transform =
+        `translateX(-${i*100}%)`;
+
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active");
 }
+
+/* SWIPE SUPPORT */
+let startX = 0;
+
+document.addEventListener("touchstart",e=>{
+    startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",e=>{
+    let endX = e.changedTouches[0].clientX;
+
+    if(startX - endX > 50 && index < 4){
+        document.querySelectorAll(".tab")[index+1].click();
+    }
+
+    if(endX - startX > 50 && index > 0){
+        document.querySelectorAll(".tab")[index-1].click();
+    }
+});
 
 /* TIMER */
 function updateTimer(){
@@ -224,36 +236,16 @@ function updateTimer(){
     let now = new Date();
     let diff = end - now;
 
-    let d = Math.floor(diff/(1000*60*60*24));
-    let h = Math.floor(diff/(1000*60*60)%24);
+    let d = Math.floor(diff/86400000);
+    let h = Math.floor(diff/3600000%24);
 
     document.getElementById("timer").innerText =
-        `Осталось: ${d} дней ${h} часов`;
+        `Осталось: ${d}д ${h}ч`;
 }
 setInterval(updateTimer,1000);
 updateTimer();
 
-/* LIVE POINTS SIMULATION */
-setInterval(()=>{
-    let p = document.getElementById("gwPoints");
-    let val = parseInt(p.innerText);
-    p.innerText = val + Math.floor(Math.random()*2);
-},5000);
-
-/* TRANSFER SYSTEM */
-let players = ["Родри","Салах","Хакими","Кейн","Де Брюйне"];
-
-function transfer(){
-    let slot = "p"+(Math.floor(Math.random()*4)+1);
-    let newP = players[Math.floor(Math.random()*players.length)];
-
-    document.getElementById(slot).innerText =
-        Math.floor(Math.random()*12);
-
-    alert("Пришёл новый игрок: " + newP);
-}
-
 </script>
 
 </body>
-    </html>
+</html>
