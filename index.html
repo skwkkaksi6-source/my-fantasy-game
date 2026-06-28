@@ -5,32 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; }
-        .tabs { display: flex; justify-content: space-around; background: #222; padding: 10px; }
-        .tab { cursor: pointer; color: #aaa; padding-bottom: 5px; }
+        body { background-color: #1a1a1a; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; }
+        
+        /* Табы */
+        .tabs { display: flex; justify-content: space-around; background: #222; padding: 10px 0; border-bottom: 1px solid #333; position: sticky; top: 0; }
+        .tab { cursor: pointer; color: #aaa; padding: 5px 10px; font-size: 14px; }
         .tab.active { color: white; border-bottom: 2px solid #fff; }
+        
+        /* Контент */
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
+        .card { background: #2c2c2c; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
         
-        .card { background: #2c2c2c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        #timer { font-size: 20px; font-weight: bold; margin-top: 5px; }
+        /* Главная */
+        #timer { font-size: 24px; font-weight: bold; color: #fff; margin-top: 10px; }
         
         /* Поле */
-        .field { background-color: #21873b; height: 300px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
+        .field { background-color: #21873b; height: 300px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.3); }
         .btn-container { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #7b61ff; color: white; font-weight: bold; }
-
+        button { flex: 1; padding: 12px; border: none; border-radius: 8px; background: #7b61ff; color: white; font-weight: bold; cursor: pointer; }
+        
         /* Матчи */
-        .match-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; justify-content: space-between; }
-        .match-time { font-size: 12px; color: #aaa; width: 60px; }
-        .match-teams { flex-grow: 1; margin: 0 15px; }
+        .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; justify-content: space-between; }
+        .match-time { font-size: 13px; color: #aaa; width: 50px; }
+        .match-teams { flex-grow: 1; margin: 0 15px; font-weight: 500; }
     </style>
 </head>
 <body>
     <div class="tabs">
-        <div class="tab active" onclick="showTab('home')">Главная</div>
-        <div class="tab" onclick="showTab('team')">Моя команда</div>
-        <div class="tab" onclick="showTab('matches')">Матчи</div>
+        <div class="tab active" onclick="showTab('home', this)">Главная</div>
+        <div class="tab" onclick="showTab('team', this)">Моя команда</div>
+        <div class="tab" onclick="showTab('matches', this)">Матчи</div>
     </div>
 
     <div id="home" class="content active">
@@ -38,11 +43,11 @@
             <div>World Cup 2026</div>
             <div id="timer">00ч : 00м : 00с</div>
         </div>
-        <div class="card">Лучшие игроки раунда...</div>
+        <div class="card">Лучшие игроки раунда</div>
     </div>
 
     <div id="team" class="content">
-        <div class="field">Поле с игроками</div>
+        <div class="field">Поле (состав будет здесь)</div>
         <div class="btn-container">
             <button>ЗАМЕНЫ</button>
             <button>ТРАНСФЕРЫ</button>
@@ -52,5 +57,37 @@
     <div id="matches" class="content">
         <div class="card">
             <div class="match-row"><div class="match-time">22:00</div><div class="match-teams">ЮАР — Канада</div><div>🔔</div></div>
-            <div class="match-row"><div class="match-time">20:00</div>
+            <div class="match-row"><div class="match-time">20:00</div><div class="match-teams">Бразилия — Япония</div><div>🔔</div></div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId, element) {
+            document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            element.classList.add('active');
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const deadline = new Date();
+            deadline.setHours(21, 30, 0, 0);
             
+            if (now > deadline) deadline.setDate(deadline.getDate() + 1);
+            
+            const diff = deadline - now;
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('timer').innerText = 
+                `${h.toString().padStart(2, '0')}ч : ${m.toString().padStart(2, '0')}м : ${s.toString().padStart(2, '0')}с`;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+        Telegram.WebApp.ready();
+    </script>
+</body>
+</html>
