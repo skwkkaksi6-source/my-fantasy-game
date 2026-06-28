@@ -21,6 +21,10 @@
         
         .match-time { font-size: 0.8em; color: #888; min-width: 60px; }
         .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
+        
+        /* Стили поля */
+        .field { background: #28a745; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .sub-field { display: flex; justify-content: center; gap: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -47,7 +51,27 @@
         <div id="matches-list"></div>
     </div>
 
-    <div id="team" class="content">... Моя команда ...</div>
+    <div id="team" class="content">
+        <div class="field">
+            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
+            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
+            <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
+            <div class="sub-field" style="grid-column: span 4;">
+                <div class="avatar" style="background: #eee;"></div><div class="avatar" style="background: #eee;"></div>
+                <div class="avatar" style="background: #eee;"></div><div class="avatar" style="background: #eee;"></div>
+            </div>
+        </div>
+        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px;">ⓘ Узнайте, как игроки получают очки для вашей команды ></div>
+        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 10px;">Трансферы</div>
+            <div style="font-size: 0.9em; color: #aaa; margin-bottom: 15px;">Планируете трансферы или собираетесь использовать текущий состав?</div>
+            <div style="color: #7b61ff; cursor: pointer;">См. историю трансферов</div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="main-button" style="background: #4a4af4; color: white;">ЗАМЕНЫ</button>
+            <button class="main-button" style="background: #4a4af4; color: white;">ТРАНСФЕРЫ</button>
+        </div>
+    </div>
 
     <script>
         const playersData = [
@@ -95,16 +119,12 @@
             document.getElementById('matches-list').innerHTML = matchesData.map(m => `
                 <div class="match-row">
                     <div class="match-time">${m.d}<br>${m.t}</div>
-                    <div style="flex-grow: 1;">
-                        <div>${m.t1}</div>
-                        <div style="color: #aaa;">${m.t2}</div>
-                    </div>
+                    <div style="flex-grow: 1;"><div>${m.t1}</div><div style="color: #aaa;">${m.t2}</div></div>
                 </div>
             `).join('');
         }
 
         function toggleList() { expanded = !expanded; renderApp(); }
-
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
