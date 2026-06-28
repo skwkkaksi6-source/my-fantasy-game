@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fantasy 4.0</title>
+<title>Fantasy 5.1</title>
 
 <style>
 body{
@@ -13,32 +13,43 @@ body{
     color:white;
 }
 
-.topnav{
+.header{
     display:flex;
-    overflow-x:auto;
+    justify-content:space-between;
+    padding:14px;
     background:#111826;
-    padding:10px;
     position:sticky;
     top:0;
     z-index:10;
+    font-weight:bold;
+}
+
+.tabs{
+    display:flex;
+    overflow-x:auto;
+    background:#111826;
+    border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
 .tab{
-    padding:8px 14px;
-    margin-right:8px;
-    border-radius:20px;
+    padding:10px 14px;
     color:#aaa;
+    white-space:nowrap;
     cursor:pointer;
 }
 
 .tab.active{
-    background:#4cd964;
-    color:#0b0f14;
-    font-weight:bold;
+    color:#4cd964;
+    border-bottom:2px solid #4cd964;
 }
 
-.page{display:none;padding:14px;}
-.page.active{display:block}
+.screen{
+    display:none;
+    padding:14px;
+}
+.screen.active{
+    display:block;
+}
 
 .card{
     background:#151c26;
@@ -69,127 +80,201 @@ body{
 
 .btn{
     width:100%;
-    padding:12px;
+    padding:10px;
     border:none;
     border-radius:12px;
     background:#4cd964;
-    color:#0b0f14;
     font-weight:bold;
+    color:#0b0f14;
     margin-top:10px;
-    cursor:pointer;
 }
 
-/* TEAM */
-.player{
+/* PLAYER CARD */
+.item{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     padding:10px;
-    background:#111826;
-    border-radius:10px;
-    margin-bottom:8px;
-    cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    gap:10px;
 }
 
-.price{color:#4cd964}
-.small{color:#aaa;font-size:12px}
+.left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+img{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,0.1);
+}
+
+.small{
+    color:#aaa;
+    font-size:12px;
+}
+
+.price{
+    color:#4cd964;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topnav">
-    <div class="tab active" onclick="go(0,this)">Главная</div>
-    <div class="tab" onclick="go(1,this)">Команда</div>
-    <div class="tab" onclick="go(2,this)">Рынок</div>
-    <div class="tab" onclick="go(3,this)">Лига</div>
+<div class="header">
+    <div>⚽ Fantasy 5.1</div>
+    <div id="total">0 pts</div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="openTab(0,this)">Главная</div>
+    <div class="tab" onclick="openTab(1,this)">Команда</div>
+    <div class="tab" onclick="openTab(2,this)">Рынок</div>
+    <div class="tab" onclick="openTab(3,this)">Матчи</div>
 </div>
 
 <!-- HOME -->
-<div class="page active">
+<div class="screen active">
 
-<div class="hero">
-    <h3>Очки команды</h3>
-    <div class="big" id="totalPts">0</div>
-    <p>Fantasy 4.0</p>
+<div class="card hero">
+    <h3>Очки тура</h3>
+    <div class="big" id="gw">78</div>
 </div>
 
 <div class="card">
-    <h3>Дедлайн</h3>
-    <p>4 июля 23:59</p>
+    <h3>Лучшие игроки</h3>
+    <div class="row"><span>Мбаппе</span><b>14</b></div>
+    <div class="row"><span>Месси</span><b>12</b></div>
+    <div class="row"><span>Беллингем</span><b>11</b></div>
 </div>
 
 </div>
 
 <!-- TEAM -->
-<div class="page">
+<div class="screen">
 
 <div class="card">
 <h3>Моя команда</h3>
-<div id="myTeam"></div>
-<p>Капитан: <b id="captainName">—</b> (x2)</p>
+<div id="team"></div>
+<p>Капитан: <b id="cap">—</b></p>
 </div>
 
 </div>
 
 <!-- MARKET -->
-<div class="page">
+<div class="screen">
 
 <div class="card">
-<h3>Рынок</h3>
+<h3>Рынок игроков</h3>
 <div id="market"></div>
 </div>
 
 </div>
 
-<!-- LEAGUE -->
-<div class="page">
+<!-- MATCHES -->
+<div class="screen">
 
 <div class="card">
-<h3>Лига</h3>
-<div class="row"><span>Ты</span><b id="mePts">0</b></div>
-<div class="row"><span>Bot 1</span><b>120</b></div>
-<div class="row"><span>Bot 2</span><b>98</b></div>
+<h3>Матчи сборных</h3>
+
+<div class="row">🇫🇷 Франция - 🇦🇷 Аргентина <b>LIVE</b></div>
+<div class="row">🇧🇷 Бразилия - 🇩🇪 Германия <b>23:30</b></div>
+<div class="row">🇳🇱 Нидерланды - 🇲🇦 Марокко <b>04:00</b></div>
+
 </div>
 
 </div>
 
 <script>
 
-/* DATA */
-let budget = 100;
-let captain = null;
-
-let players = [
-    {name:"Mbappé", price:12, pts:14},
-    {name:"Messi", price:11, pts:12},
-    {name:"Bellingham", price:10, pts:11},
-    {name:"Vinícius", price:9, pts:9},
-    {name:"Haaland", price:13, pts:15}
+/* PLAYERS WITH IMAGES */
+let players=[
+{
+name:"Mbappé",price:12,pts:14,
+img:"https://cdn.sofifa.net/players/231/747/25_120.png"
+},
+{
+name:"Messi",price:11,pts:12,
+img:"https://cdn.sofifa.net/players/158/023/25_120.png"
+},
+{
+name:"Bellingham",price:10,pts:11,
+img:"https://cdn.sofifa.net/players/253/072/25_120.png"
+},
+{
+name:"Vinícius",price:9,pts:9,
+img:"https://cdn.sofifa.net/players/238/794/25_120.png"
+},
+{
+name:"Haaland",price:13,pts:15,
+img:"https://cdn.sofifa.net/players/239/085/25_120.png"
+}
 ];
 
-let myTeam = [];
-
-/* LOAD SAVE */
-function load(){
-    let saved = localStorage.getItem("team");
-    if(saved) myTeam = JSON.parse(saved);
-}
-load();
-
-/* SAVE */
-function save(){
-    localStorage.setItem("team",JSON.stringify(myTeam));
-}
+let team=[];
+let captain=null;
 
 /* NAV */
-function go(i,el){
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-    document.querySelectorAll(".page")[i].classList.add("active");
+function openTab(i,el){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.querySelectorAll(".screen")[i].classList.add("active");
 
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
 
     render();
+}
+
+/* BUY */
+function buy(i){
+    team.push({...players[i]});
+    render();
+}
+
+/* SELL */
+function sell(i){
+    team.splice(i,1);
+    render();
+}
+
+/* CAPTAIN */
+function setCap(name){
+    captain=name;
+    render();
+}
+
+/* TEAM */
+function renderTeam(){
+    let el=document.getElementById("team");
+    el.innerHTML="";
+
+    let total=0;
+
+    team.forEach((p,i)=>{
+        let pts=p.pts;
+        if(captain===p.name) pts*=2;
+
+        total+=pts;
+
+        el.innerHTML+=`
+        <div class="item">
+            <div class="left" onclick="setCap('${p.name}')">
+                <img src="${p.img}">
+                <div>
+                    <b>${p.name}</b><br>
+                    <span class="small">${pts} pts</span>
+                </div>
+            </div>
+            <button onclick="sell(${i})">Sell</button>
+        </div>`;
+    });
+
+    document.getElementById("total").innerText=total+" pts";
 }
 
 /* MARKET */
@@ -198,92 +283,30 @@ function renderMarket(){
     el.innerHTML="";
 
     players.forEach((p,i)=>{
-        let div=document.createElement("div");
-        div.className="player";
-        div.innerHTML=`
-        <div>
-            <b>${p.name}</b><br>
-            <span class="small">${p.pts} pts</span>
-        </div>
-        <div>
-            <div class="price">${p.price}M</div>
-            <button onclick="buy(${i})">Buy</button>
+        el.innerHTML+=`
+        <div class="item">
+            <div class="left">
+                <img src="${p.img}">
+                <div>
+                    <b>${p.name}</b><br>
+                    <span class="small">${p.pts} pts</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="price">${p.price}M</div>
+                <button onclick="buy(${i})">Buy</button>
+            </div>
         </div>`;
-        el.appendChild(div);
     });
-}
-
-/* TEAM */
-function renderTeam(){
-    let el=document.getElementById("myTeam");
-    el.innerHTML="";
-
-    let total=0;
-
-    myTeam.forEach((p,i)=>{
-        let pts=p.pts;
-
-        if(captain===p.name) pts*=2;
-
-        total+=pts;
-
-        let div=document.createElement("div");
-        div.className="player";
-        div.innerHTML=`
-        <div>
-            <b onclick="setCaptain('${p.name}')">${p.name}</b>
-            <div class="small">${pts} pts</div>
-        </div>
-        <div>
-            <button onclick="sell(${i})">Sell</button>
-        </div>`;
-        el.appendChild(div);
-    });
-
-    document.getElementById("totalPts").innerText=total;
-    document.getElementById("mePts").innerText=total;
-}
-
-/* BUY */
-function buy(i){
-    let p=players[i];
-
-    if(budget < p.price){
-        alert("Нет бюджета!");
-        return;
-    }
-
-    myTeam.push({...p});
-    budget-=p.price;
-
-    save();
-    render();
-}
-
-/* SELL */
-function sell(i){
-    budget+=myTeam[i].price;
-    myTeam.splice(i,1);
-
-    save();
-    render();
-}
-
-/* CAPTAIN */
-function setCaptain(name){
-    captain=name;
-    document.getElementById("captainName").innerText=name;
-    save();
-    render();
-}
-
-/* RENDER ALL */
-function render(){
-    renderMarket();
-    renderTeam();
 }
 
 /* INIT */
+function render(){
+    renderTeam();
+    renderMarket();
+}
+
 render();
 
 </script>
