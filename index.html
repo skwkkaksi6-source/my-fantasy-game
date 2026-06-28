@@ -2,543 +2,258 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Fantasy Football</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy 1.0</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-background:#0f1118;
-color:#fff;
-padding-bottom:90px;
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
+    color:white;
 }
 
-header{
-background:linear-gradient(135deg,#6d4cff,#4a31d6);
-padding:20px;
-border-bottom-left-radius:20px;
-border-bottom-right-radius:20px;
+/* TOP */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    padding:14px;
+    background:#181818;
+    position:sticky;
+    top:0;
 }
 
-.balance{
-display:flex;
-justify-content:space-between;
-align-items:center;
+/* PAGES */
+.page{display:none;padding:15px;padding-bottom:90px;}
+.page.active{display:block}
+
+/* CARDS */
+.card{
+    background:#1c1c1c;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:12px;
 }
 
-.balance h2{
-font-size:25px;
+.hero{
+    background:#222;
+    padding:18px;
+    border-radius:14px;
+    text-align:center;
 }
 
-.money{
-font-size:15px;
-opacity:.8;
-margin-top:5px;
+.big{
+    font-size:42px;
+    font-weight:bold;
+    margin:10px 0;
 }
 
-.points{
-background:rgba(255,255,255,.15);
-padding:12px 18px;
-border-radius:16px;
-text-align:center;
+/* BUTTON */
+.btn{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#00c853;
+    color:white;
+    margin-top:10px;
 }
 
-.points b{
-font-size:26px;
-display:block;
+/* LIST */
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    border-bottom:1px solid #333;
 }
 
-.tabs{
-display:flex;
-justify-content:space-around;
-margin:18px;
-background:#191d2a;
-border-radius:16px;
-padding:6px;
-}
-
-.tab{
-flex:1;
-text-align:center;
-padding:12px;
-border-radius:12px;
-cursor:pointer;
-transition:.25s;
-}
-
-.tab.active{
-background:#6d4cff;
-}
-
-.content{
-padding:16px;
-}
-
-.pitch{
-
-background:#1b5e20;
-
-border-radius:22px;
-
-padding:20px;
-
-position:relative;
-
-overflow:hidden;
-
-}
-
-.pitch:before{
-
-content:"";
-
-position:absolute;
-
-left:50%;
-
-top:0;
-
-width:2px;
-
-height:100%;
-
-background:rgba(255,255,255,.25);
-
-}
-
-.pitch:after{
-
-content:"";
-
-position:absolute;
-
-left:50%;
-
-top:50%;
-
-transform:translate(-50%,-50%);
-
-width:90px;
-
-height:90px;
-
-border:2px solid rgba(255,255,255,.25);
-
-border-radius:50%;
-
-}
-
-.line{
-
-display:flex;
-
-justify-content:center;
-
-gap:18px;
-
-margin:18px 0;
-
-position:relative;
-
-z-index:2;
-
+/* FIELD */
+.field{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
 }
 
 .player{
-
-width:66px;
-
-text-align:center;
-
+    background:#2a2a2a;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
 }
 
-.avatar{
-
-width:52px;
-
-height:52px;
-
-background:linear-gradient(135deg,#7b61ff,#5a43db);
-
-border-radius:50%;
-
-margin:auto;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:18px;
-
-font-weight:bold;
-
-}
-
-.player-name{
-
-font-size:11px;
-
-margin-top:6px;
-
-white-space:nowrap;
-
-overflow:hidden;
-
-text-overflow:ellipsis;
-
-}
-
-.player-pts{
-
-color:#76ff7a;
-
-font-size:12px;
-
-margin-top:2px;
-
-font-weight:bold;
-
-}
-
-.card{
-
-background:#191d2a;
-
-padding:15px;
-
-border-radius:18px;
-
-margin-top:18px;
-
-}
-
-.main-btn{
-
-width:100%;
-
-background:#6d4cff;
-
-border:none;
-
-color:#fff;
-
-padding:15px;
-
-font-size:16px;
-
-border-radius:14px;
-
-margin-top:14px;
-
-cursor:pointer;
-
-}
-
+/* BOTTOM NAV */
 .bottom{
-
-position:fixed;
-
-left:0;
-
-right:0;
-
-bottom:0;
-
-background:#171b26;
-
-display:flex;
-
-justify-content:space-around;
-
-padding:12px 0;
-
-border-top:1px solid rgba(255,255,255,.08);
-
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+    justify-content:space-around;
+    background:#181818;
+    padding:10px 0;
 }
 
-.bottom div{
-
-text-align:center;
-
-font-size:12px;
-
-opacity:.7;
-
+.bottom button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:18px;
 }
-
-.bottom .active{
-
-opacity:1;
-
-color:#7b61ff;
-
-}
-
-.match{
-
-display:flex;
-
-justify-content:space-between;
-
-background:#191d2a;
-
-padding:14px;
-
-border-radius:16px;
-
-margin-bottom:12px;
-
-}
-
-.hidden{
-
-display:none;
-
-}
-
 </style>
-
 </head>
 
 <body>
-<div class="tabs">
-    <div class="tab active" onclick="showTab('team',this)">Команда</div>
-    <div class="tab" onclick="showTab('matches',this)">Матчи</div>
-    <div class="tab" onclick="showTab('league',this)">Лига</div>
-    <div class="tab" onclick="showTab('profile',this)">Профиль</div>
+
+<div class="topbar">
+    <div>⚽ Fantasy 1.0</div>
+    <div id="totalPts">142 pts</div>
 </div>
 
-<!-- КОМАНДА -->
-<div id="team" class="content">
+<!-- HOME -->
+<div id="home" class="page active">
 
-<div class="pitch">
+<div class="hero">
+    <h3>Очки за тур</h3>
+    <div class="big" id="gwPoints">78</div>
+    <p>Топ 32%</p>
 
-<div class="line">
-<div class="player">
-<div class="avatar">⚽</div>
-<div class="player-name">Мбаппе</div>
-<div class="player-pts">12 pts</div>
-</div>
-</div>
-
-<div class="line">
-<div class="player">
-<div class="avatar">⚽</div>
-<div class="player-name">Винисиус</div>
-<div class="player-pts">9 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">⚽</div>
-<div class="player-name">Месси</div>
-<div class="player-pts">15 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">⚽</div>
-<div class="player-name">Ямаль</div>
-<div class="player-pts">10 pts</div>
-</div>
-
-</div>
-
-<div class="line">
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Родри</div>
-<div class="player-pts">8 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Беллингем</div>
-<div class="player-pts">11 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Педри</div>
-<div class="player-pts">9 pts</div>
-</div>
-
-</div>
-
-<div class="line">
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Ван Дейк</div>
-<div class="player-pts">7 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Салиба</div>
-<div class="player-pts">6 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Хакими</div>
-<div class="player-pts">8 pts</div>
-</div>
-
-<div class="player">
-<div class="avatar">🛡</div>
-<div class="player-name">Канселу</div>
-<div class="player-pts">5 pts</div>
-</div>
-
-</div>
-
-<div class="line">
-
-<div class="player">
-<div class="avatar">🥅</div>
-<div class="player-name">Доннарумма</div>
-<div class="player-pts">10 pts</div>
-</div>
-
-</div>
-
+    <button class="btn" onclick="go('team')">Управлять командой</button>
 </div>
 
 <div class="card">
-<h3>Капитан</h3>
-<p>🇦🇷 Лионель Месси (x2)</p>
+    <h3>Дедлайн</h3>
+    <p>4 июля 23:59</p>
+    <p id="timer">Осталось: ...</p>
 </div>
 
 <div class="card">
-<h3>Бюджет</h3>
-<p>Осталось: <b>4.5 млн €</b></p>
-<button class="main-btn">Открыть трансферы</button>
-</div>
-
-</div>
-
-<!-- МАТЧИ -->
-
-<div id="matches" class="content hidden">
-
-<h2>Матчи 1/8 финала</h2>
-
-<div class="match">
-<div>🇧🇷 Бразилия — 🇯🇵 Япония</div>
-<div>20:00</div>
-</div>
-
-<div class="match">
-<div>🇩🇪 Германия — 🇵🇾 Парагвай</div>
-<div>23:30</div>
-</div>
-
-<div class="match">
-<div>🇳🇱 Нидерланды — 🇲🇦 Марокко</div>
-<div>04:00</div>
-</div>
-
-</div>
-<header>
-
-<div class="balance">
-
-<div>
-
-<h2>Fantasy World Cup</h2>
-
-<div class="money">Бюджет: 100.0 млн €</div>
-
-</div>
-
-<div class="points">
-
-<b>128</b>
-
-PTS
-
-</div>
-
-</div>
-
-</header>
-<!-- ЛИГА -->
-<div id="league" class="content hidden">
-
-<h2>Таблица лиги</h2>
-
-<div class="table">
-
-<div class="row head">
-<div>Место</div>
-<div>Команда</div>
-<div>Очки</div>
-</div>
-
-<div class="row">
-<div>1</div>
-<div>Red Storm</div>
-<div>34</div>
-</div>
-
-<div class="row">
-<div>2</div>
-<div>Blue Warriors</div>
-<div>31</div>
-</div>
-
-<div class="row">
-<div>3</div>
-<div>My Team</div>
-<div>28</div>
-</div>
-
-</div>
-</div>
-
-<!-- ПРОФИЛЬ -->
-<div id="profile" class="content hidden">
-
-<h2>Профиль</h2>
-
-<div class="card">
-<p><b>Ник:</b> PlayerOne</p>
-<p><b>Уровень:</b> 12</p>
-<p><b>Всего очков:</b> 142</p>
+    <h3>Лучшие игроки тура</h3>
+    <div class="row"><span>Мбаппе</span><b>14</b></div>
+    <div class="row"><span>Месси</span><b>12</b></div>
+    <div class="row"><span>Беллингем</span><b>11</b></div>
 </div>
 
 <div class="card">
-<p><b>Статистика:</b></p>
+    <h3>Лучшие за сезон</h3>
+    <div class="row"><span>Холанд</span><b>98</b></div>
+    <div class="row"><span>Мбаппе</span><b>94</b></div>
+    <div class="row"><span>Беллингем</span><b>88</b></div>
+</div>
+
+</div>
+
+<!-- TEAM -->
+<div id="team" class="page">
+
+<div class="card">
+<h3>Моя команда</h3>
+
+<div class="field">
+
+<div class="player">Мбаппе<br><b id="p1">12</b></div>
+<div class="player">Месси<br><b id="p2">15</b></div>
+<div class="player">Винисиус<br><b id="p3">9</b></div>
+<div class="player">Ямаль<br><b id="p4">10</b></div>
+
+</div>
+
+<button class="btn" onclick="transfer()">Случайный трансфер</button>
+
+</div>
+
+</div>
+
+<!-- MATCHES -->
+<div id="matches" class="page">
+
+<div class="card">
+<h3>Матчи</h3>
+
+<div class="row"><span>Бразилия - Япония</span><b>LIVE</b></div>
+<div class="row"><span>Германия - Парагвай</span><b>23:30</b></div>
+<div class="row"><span>Нидерланды - Марокко</span><b>04:00</b></div>
+
+</div>
+
+</div>
+
+<!-- LEAGUE -->
+<div id="league" class="page">
+
+<div class="card">
+<h3>Лига</h3>
+
+<div class="row"><span>1. Red Storm</span><b id="l1">34</b></div>
+<div class="row"><span>2. Blue Warriors</span><b>31</b></div>
+<div class="row"><span>3. My Team</span><b id="myRank">28</b></div>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+
+<div class="card">
+<h3>Профиль</h3>
+<p>Ник: PlayerOne</p>
 <p>Побед: 8</p>
 <p>Поражений: 3</p>
-<p>Ничьи: 2</p>
 </div>
 
+</div>
+
+<!-- NAV -->
+<div class="bottom">
+    <button onclick="go('home')">🏠</button>
+    <button onclick="go('team')">🧠</button>
+    <button onclick="go('matches')">📅</button>
+    <button onclick="go('league')">🏆</button>
+    <button onclick="go('profile')">👤</button>
 </div>
 
 <script>
-function showTab(tabId, el) {
-    let contents = document.querySelectorAll('.content');
-    let tabs = document.querySelectorAll('.tab');
 
-    contents.forEach(c => c.classList.add('hidden'));
-    tabs.forEach(t => t.classList.remove('active'));
-
-    document.getElementById(tabId).classList.remove('hidden');
-    el.classList.add('active');
+function go(page){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(page).classList.add('active');
 }
+
+/* TIMER */
+function updateTimer(){
+    let end = new Date("2026-07-04T23:59:59");
+    let now = new Date();
+    let diff = end - now;
+
+    let d = Math.floor(diff/(1000*60*60*24));
+    let h = Math.floor(diff/(1000*60*60)%24);
+
+    document.getElementById("timer").innerText =
+        `Осталось: ${d} дней ${h} часов`;
+}
+setInterval(updateTimer,1000);
+updateTimer();
+
+/* LIVE POINTS SIMULATION */
+setInterval(()=>{
+    let p = document.getElementById("gwPoints");
+    let val = parseInt(p.innerText);
+    p.innerText = val + Math.floor(Math.random()*2);
+},5000);
+
+/* TRANSFER SYSTEM */
+let players = ["Родри","Салах","Хакими","Кейн","Де Брюйне"];
+
+function transfer(){
+    let slot = "p"+(Math.floor(Math.random()*4)+1);
+    let newP = players[Math.floor(Math.random()*players.length)];
+
+    document.getElementById(slot).innerText =
+        Math.floor(Math.random()*12);
+
+    alert("Пришёл новый игрок: " + newP);
+}
+
 </script>
 
 </body>
-</html>
+    </html>
