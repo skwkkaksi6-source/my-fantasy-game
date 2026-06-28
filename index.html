@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fantasy 2.0</title>
+<title>Fantasy 4.0</title>
 
 <style>
 body{
@@ -13,27 +13,21 @@ body{
     color:white;
 }
 
-/* TOP NAV (SOFASCORE STYLE) */
 .topnav{
     display:flex;
     overflow-x:auto;
-    white-space:nowrap;
     background:#111826;
     padding:10px;
     position:sticky;
     top:0;
     z-index:10;
-    border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
 .tab{
-    flex:0 0 auto;
     padding:8px 14px;
     margin-right:8px;
     border-radius:20px;
-    font-size:14px;
     color:#aaa;
-    transition:0.2s;
     cursor:pointer;
 }
 
@@ -43,25 +37,14 @@ body{
     font-weight:bold;
 }
 
-/* PAGES */
-.container{
-    display:flex;
-    width:500%;
-    transition:0.3s ease;
-}
+.page{display:none;padding:14px;}
+.page.active{display:block}
 
-.page{
-    width:100%;
-    padding:14px;
-}
-
-/* CARD */
 .card{
     background:#151c26;
-    padding:14px;
     border-radius:14px;
+    padding:14px;
     margin-bottom:12px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.35);
 }
 
 .hero{
@@ -77,7 +60,6 @@ body{
     color:#4cd964;
 }
 
-/* LIST */
 .row{
     display:flex;
     justify-content:space-between;
@@ -85,7 +67,6 @@ body{
     border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-/* BUTTON */
 .btn{
     width:100%;
     padding:12px;
@@ -95,60 +76,46 @@ body{
     color:#0b0f14;
     font-weight:bold;
     margin-top:10px;
+    cursor:pointer;
 }
+
+/* TEAM */
+.player{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    background:#111826;
+    border-radius:10px;
+    margin-bottom:8px;
+    cursor:pointer;
+}
+
+.price{color:#4cd964}
+.small{color:#aaa;font-size:12px}
 </style>
 </head>
 
 <body>
 
-<!-- TOP TABS -->
 <div class="topnav">
     <div class="tab active" onclick="go(0,this)">Главная</div>
-    <div class="tab" onclick="go(1,this)">Матчи</div>
-    <div class="tab" onclick="go(2,this)">Команда</div>
+    <div class="tab" onclick="go(1,this)">Команда</div>
+    <div class="tab" onclick="go(2,this)">Рынок</div>
     <div class="tab" onclick="go(3,this)">Лига</div>
-    <div class="tab" onclick="go(4,this)">Профиль</div>
 </div>
 
-<!-- SWIPE CONTAINER -->
-<div class="container" id="container">
-
 <!-- HOME -->
-<div class="page">
+<div class="page active">
 
 <div class="hero">
-    <h3>Очки за тур</h3>
-    <div class="big">78</div>
-    <p>Топ 32%</p>
-
-    <button class="btn">Управлять командой</button>
+    <h3>Очки команды</h3>
+    <div class="big" id="totalPts">0</div>
+    <p>Fantasy 4.0</p>
 </div>
 
 <div class="card">
     <h3>Дедлайн</h3>
     <p>4 июля 23:59</p>
-    <p id="timer">Осталось...</p>
-</div>
-
-<div class="card">
-    <h3>Лучшие игроки тура</h3>
-    <div class="row"><span>Мбаппе</span><b>14</b></div>
-    <div class="row"><span>Месси</span><b>12</b></div>
-    <div class="row"><span>Беллингем</span><b>11</b></div>
-</div>
-
-</div>
-
-<!-- MATCHES -->
-<div class="page">
-
-<div class="card">
-<h3>Матчи</h3>
-
-<div class="row"><span>Бразилия - Япония</span><b>LIVE</b></div>
-<div class="row"><span>Германия - Парагвай</span><b>23:30</b></div>
-<div class="row"><span>Нидерланды - Марокко</span><b>04:00</b></div>
-
 </div>
 
 </div>
@@ -158,13 +125,18 @@ body{
 
 <div class="card">
 <h3>Моя команда</h3>
+<div id="myTeam"></div>
+<p>Капитан: <b id="captainName">—</b> (x2)</p>
+</div>
 
-<div class="row"><span>Мбаппе</span><b>12</b></div>
-<div class="row"><span>Месси</span><b>15</b></div>
-<div class="row"><span>Винисиус</span><b>9</b></div>
+</div>
 
-<button class="btn">Трансферы</button>
+<!-- MARKET -->
+<div class="page">
 
+<div class="card">
+<h3>Рынок</h3>
+<div id="market"></div>
 </div>
 
 </div>
@@ -174,76 +146,145 @@ body{
 
 <div class="card">
 <h3>Лига</h3>
-
-<div class="row"><span>1. Red Storm</span><b>34</b></div>
-<div class="row"><span>2. Blue Warriors</span><b>31</b></div>
-<div class="row"><span>3. My Team</span><b>28</b></div>
-
-</div>
-
-</div>
-
-<!-- PROFILE -->
-<div class="page">
-
-<div class="card">
-<h3>Профиль</h3>
-<p>Ник: PlayerOne</p>
-<p>Победы: 8</p>
-<p>Поражения: 3</p>
-</div>
-
+<div class="row"><span>Ты</span><b id="mePts">0</b></div>
+<div class="row"><span>Bot 1</span><b>120</b></div>
+<div class="row"><span>Bot 2</span><b>98</b></div>
 </div>
 
 </div>
 
 <script>
 
-let index = 0;
+/* DATA */
+let budget = 100;
+let captain = null;
 
+let players = [
+    {name:"Mbappé", price:12, pts:14},
+    {name:"Messi", price:11, pts:12},
+    {name:"Bellingham", price:10, pts:11},
+    {name:"Vinícius", price:9, pts:9},
+    {name:"Haaland", price:13, pts:15}
+];
+
+let myTeam = [];
+
+/* LOAD SAVE */
+function load(){
+    let saved = localStorage.getItem("team");
+    if(saved) myTeam = JSON.parse(saved);
+}
+load();
+
+/* SAVE */
+function save(){
+    localStorage.setItem("team",JSON.stringify(myTeam));
+}
+
+/* NAV */
 function go(i,el){
-    index = i;
-
-    document.getElementById("container").style.transform =
-        `translateX(-${i*100}%)`;
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.querySelectorAll(".page")[i].classList.add("active");
 
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
+
+    render();
 }
 
-/* SWIPE SUPPORT */
-let startX = 0;
+/* MARKET */
+function renderMarket(){
+    let el=document.getElementById("market");
+    el.innerHTML="";
 
-document.addEventListener("touchstart",e=>{
-    startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend",e=>{
-    let endX = e.changedTouches[0].clientX;
-
-    if(startX - endX > 50 && index < 4){
-        document.querySelectorAll(".tab")[index+1].click();
-    }
-
-    if(endX - startX > 50 && index > 0){
-        document.querySelectorAll(".tab")[index-1].click();
-    }
-});
-
-/* TIMER */
-function updateTimer(){
-    let end = new Date("2026-07-04T23:59:59");
-    let now = new Date();
-    let diff = end - now;
-
-    let d = Math.floor(diff/86400000);
-    let h = Math.floor(diff/3600000%24);
-
-    document.getElementById("timer").innerText =
-        `Осталось: ${d}д ${h}ч`;
+    players.forEach((p,i)=>{
+        let div=document.createElement("div");
+        div.className="player";
+        div.innerHTML=`
+        <div>
+            <b>${p.name}</b><br>
+            <span class="small">${p.pts} pts</span>
+        </div>
+        <div>
+            <div class="price">${p.price}M</div>
+            <button onclick="buy(${i})">Buy</button>
+        </div>`;
+        el.appendChild(div);
+    });
 }
-setInterval(updateTimer,1000);
-updateTimer();
+
+/* TEAM */
+function renderTeam(){
+    let el=document.getElementById("myTeam");
+    el.innerHTML="";
+
+    let total=0;
+
+    myTeam.forEach((p,i)=>{
+        let pts=p.pts;
+
+        if(captain===p.name) pts*=2;
+
+        total+=pts;
+
+        let div=document.createElement("div");
+        div.className="player";
+        div.innerHTML=`
+        <div>
+            <b onclick="setCaptain('${p.name}')">${p.name}</b>
+            <div class="small">${pts} pts</div>
+        </div>
+        <div>
+            <button onclick="sell(${i})">Sell</button>
+        </div>`;
+        el.appendChild(div);
+    });
+
+    document.getElementById("totalPts").innerText=total;
+    document.getElementById("mePts").innerText=total;
+}
+
+/* BUY */
+function buy(i){
+    let p=players[i];
+
+    if(budget < p.price){
+        alert("Нет бюджета!");
+        return;
+    }
+
+    myTeam.push({...p});
+    budget-=p.price;
+
+    save();
+    render();
+}
+
+/* SELL */
+function sell(i){
+    budget+=myTeam[i].price;
+    myTeam.splice(i,1);
+
+    save();
+    render();
+}
+
+/* CAPTAIN */
+function setCaptain(name){
+    captain=name;
+    document.getElementById("captainName").innerText=name;
+    save();
+    render();
+}
+
+/* RENDER ALL */
+function render(){
+    renderMarket();
+    renderTeam();
+}
+
+/* INIT */
+render();
 
 </script>
 
