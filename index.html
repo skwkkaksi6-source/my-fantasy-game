@@ -14,10 +14,10 @@
         
         .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
         .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .deadline-box { background: #4a2828; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .deadline-box { background: #4a2828; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
         .player-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 40px; height: 40px; background: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; }
+        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
         .pts { font-weight: bold; color: #7b61ff; margin-left: auto; }
         
         .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px; cursor: pointer; }
@@ -52,22 +52,19 @@
     <div id="matches" class="content">... Список матчей ...</div>
 
     <script>
-        // База игроков с фото
         const playersData = [
-            { name: "Винисиус Жуниор", pts: 41, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
-            { name: "Лионель Месси", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
-            { name: "Усман Дембеле", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
-            { name: "Килиан Мбаппе", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
-            { name: "Эмерик Лапорт", pts: 34, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
-            { name: "Кевин Де Брюйне", pts: 32, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
+            { name: "Винисиус Жуниор", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
+            { name: "Лионель Месси", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
+            { name: "Усман Дембеле", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
+            { name: "Килиан Мбаппе", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
+            { name: "Эмерик Лапорт", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
+            { name: "Кевин Де Брюйне", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
         ];
 
         let expanded = false;
 
         function renderApp() {
-            // Сумма очков
-            document.getElementById('total-points').innerText = playersData.reduce((sum, p) => sum + p.pts, 0);
-            
+            document.getElementById('total-points').innerText = "0";
             const list = document.getElementById('players-list');
             const displayLimit = expanded ? playersData.length : 3;
             
