@@ -3,25 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; }
-        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; z-index: 10; }
+        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; }
         .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
         .tab.active { color: #fff; border-bottom: 2px solid #fff; }
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
-        
         .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; background-size: cover; margin-right: 15px; }
-        .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
-        
-        .rounds-row { display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-        .r-item { cursor: pointer; padding: 5px 10px; border-radius: 8px; }
-        .r-item.active { background: #4a4af4; }
-        
-        .field { background: #28a745; border-radius: 12px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .avatar { width: 40px; height: 40px; background-color: #444; border-radius: 50%; margin-right: 15px; }
+        .pts { margin-left: auto; color: #a388ff; }
+        .field { background: #28a745; height: 250px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }
+        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+        .toggle-btn { background: #333; color: white; width: 100%; padding: 10px; border: none; border-radius: 8px; cursor: pointer; }
+        .match-time { font-size: 0.8em; color: #888; min-width: 60px; }
     </style>
 </head>
 <body>
@@ -32,45 +28,43 @@
     </div>
 
     <div id="home" class="content active">
-        <div class="stats-header"><div>Раунд 4</div><div style="font-size: 32px; font-weight: bold;">0</div></div>
+        <div class="stats-header"><div>Раунд 4</div><div style="font-size: 24px;">0 pts</div><div style="color: #f00;">Дедлайн: 12:00:00</div></div>
         <h3>Лучшие игроки</h3>
-        <div id="top-players"></div>
+        <div id="top-players-list"></div>
+        <button class="toggle-btn" onclick="togglePlayers()">Показать/Скрыть</button>
     </div>
 
     <div id="team" class="content">
-        <div class="field">СХЕМА ПОЛЯ</div>
-        <div>Здесь будет состав выбранного раунда</div>
+        <div class="field">ПОЛЕ С ИГРОКАМИ</div>
+        <div class="info-card">ⓘ Как получают очки?</div>
+        <div class="info-card">🔄 Замены (переключатель состава)</div>
+        <button class="toggle-btn">ТРАНСФЕРЫ</button>
     </div>
 
     <div id="matches" class="content">
-        <div class="rounds-row">
-            <div class="r-item" onclick="alert('История R2')">R2</div>
-            <div class="r-item" onclick="alert('История R3')">R3</div>
-            <div class="r-item active">R32</div>
-            <div class="r-item" style="color: #666;">R16</div>
-        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span>R2</span><span>R3</span><span style="background:blue; padding:2px 10px; border-radius:5px;">R32</span><span>R16</span></div>
         <div id="matches-list"></div>
     </div>
 
     <script>
-        const topPlayers = [
-            {name: "Мбаппе", pts: "52pts"}, {name: "Винисиус", pts: "48pts"}, {name: "Беллингем", pts: "45pts"}, 
-            {name: "Холанд", pts: "42pts"}, {name: "Месси", pts: "40pts"}, {name: "Сака", pts: "38pts"},
-            {name: "Ямаль", pts: "36pts"}, {name: "Де Брюйне", pts: "35pts"}, {name: "Кейн", pts: "34pts"},
-            {name: "Мусиала", pts: "32pts"}, {name: "Фернандес", pts: "30pts"}, {name: "Родри", pts: "29pts"},
-            {name: "Диас", pts: "28pts"}, {name: "Гакпо", pts: "27pts"}, {name: "Салах", pts: "26pts"}
-        ];
+        const players = ["Мбаппе", "Винисиус", "Беллингем", "Холанд", "Месси", "Сака", "Ямаль", "Де Брюйне", "Кейн", "Мусиала", "Фернандес", "Родри", "Диас", "Гакпо", "Салах"];
+        let showAll = false;
+        function render() {
+            const list = showAll ? players : players.slice(0, 3);
+            document.getElementById('top-players-list').innerHTML = list.map(p => `<div class="player-row"><div class="avatar"></div>${p}<div class="pts">10pts</div></div>`).join('');
+        }
+        function togglePlayers() { showAll = !showAll; render(); }
         
-        document.getElementById('top-players').innerHTML = topPlayers.map(p => `
-            <div class="player-row"><div class="avatar"></div><div>${p.name}</div><div class="pts">${p.pts}</div></div>
-        `).join('');
+        const matches = ["ЮАР-Канада", "Бразилия-Япония", "Германия-Парагвай", "Нидерланды-Марокко", "Кот-д'Ивуар-Норвегия", "Франция-Швеция", "Мексика-Эквадор", "Англия-ДР Конго", "Бельгия-Сенегал", "США-Босния", "Испания-Австрия", "Португалия-Хорватия", "Швейцария-Алжир", "Австралия-Египет", "Аргентина-Кабо-Верде", "Колумбия-Гана"];
+        document.getElementById('matches-list').innerHTML = matches.map(m => `<div class="match-row"><div class="match-time">00:00</div>${m}</div>`).join('');
 
-        function showTab(tabId, el) {
+        function showTab(id, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).style.display = 'block';
+            document.getElementById(id).style.display = 'block';
             el.classList.add('active');
         }
+        render();
     </script>
 </body>
 </html>
