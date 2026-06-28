@@ -5,42 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; padding: 10px; }
-        .player-card { 
-            background-color: #2c2c2c; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        .rating { 
-            background-color: #219653; 
-            padding: 5px 10px; 
-            border-radius: 5px; 
-            font-weight: bold; 
-        }
-        .player-name { font-size: 16px; font-weight: 500; }
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; padding: 0; }
+        .header { padding: 15px; background: #2c2c2c; }
+        .tabs { display: flex; justify-content: space-around; background: #222; padding: 10px; }
+        .tab { cursor: pointer; color: #aaa; }
+        .tab.active { color: white; border-bottom: 2px solid white; }
+        .content { padding: 15px; display: none; }
+        .content.active { display: block; }
+        .card { background: #2c2c2c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h3>Мой состав: Астон Вилла</h3>
-    
-    <div class="player-card">
-        <div>
-            <div class="player-name">Pau Cubarsí</div>
-            <small style="color: #aaa;">Защитник</small>
-        </div>
-        <div class="rating">7.4</div>
+
+    <div class="header">World Cup 2026</div>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('home')">Главная</div>
+        <div class="tab" onclick="showTab('team')">Моя команда</div>
+        <div class="tab" onclick="showTab('matches')">Матчи</div>
     </div>
 
-    <div class="player-card">
-        <div>
-            <div class="player-name">Олли Уоткинс</div>
-            <small style="color: #aaa;">Нападающий</small>
+    <div id="home" class="content active">
+        <div class="card">
+            <h3>World Cup 2026</h3>
+            <p>До дедлайна: 04ч : 02м : 33с</p>
         </div>
-        <div class="rating">8.1</div>
+        <div class="card">Лучшие игроки раунда...</div>
     </div>
+
+    <div id="team" class="content">
+        <div class="card">Поле для состава (пусто)</div>
+        <button>ЗАМЕНЫ</button> <button>ТРАНСФЕРЫ</button>
+    </div>
+
+    <div id="matches" class="content">
+        <div class="card">Список матчей 1/16 финала...</div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        Telegram.WebApp.ready();
+    </script>
 </body>
 </html>
+
