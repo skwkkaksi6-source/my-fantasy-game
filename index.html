@@ -5,22 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; }
-        .tabs { display: flex; justify-content: space-around; background: #222; padding: 10px; }
+        body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; }
+        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; }
         .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
         .tab.active { color: #fff; border-bottom: 2px solid #fff; }
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
-        .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .deadline-box { background: #4a2828; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        /* Стили списка */
+        .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .avatar { width: 45px; height: 45px; background-color: #333; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
+        .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
         
-        .player-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
-        .pts { font-weight: bold; color: #7b61ff; margin-left: auto; }
+        /* Матчи */
+        .match-info { display: flex; flex-direction: column; }
+        .match-time { font-size: 0.8em; color: #888; width: 60px; }
+        .flag { width: 25px; height: 18px; margin-right: 10px; background-size: cover; }
         
-        .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+        .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -30,44 +32,42 @@
         <div class="tab" onclick="showTab('matches', this)">Матчи</div>
     </div>
 
+    <!-- ГЛАВНАЯ -->
     <div id="home" class="content active">
-        <div class="stats-header">
-            <div>Раунд 4</div>
-            <div id="total-points" style="font-size: 32px; font-weight: bold;">0</div>
-            <div>всего очков</div>
-            <button class="main-button" onclick="showTab('team', document.getElementById('tab-team'))">УПРАВЛЯТЬ КОМАНДОЙ</button>
-        </div>
-        
-        <div class="deadline-box">
-            <span>До дедлайна:</span>
-            <span id="timer">00ч : 00м : 00с</span>
-        </div>
-
         <h3>Лучшие игроки</h3>
         <div id="players-list"></div>
         <button id="toggle-btn" class="toggle-btn" onclick="toggleList()">Показать еще</button>
     </div>
 
-    <div id="team" class="content">... Страница состава ...</div>
-    <div id="matches" class="content">... Список матчей ...</div>
+    <!-- МАТЧИ -->
+    <div id="matches" class="content">
+        <div id="matches-list"></div>
+    </div>
+
+    <div id="team" class="content">... Моя команда ...</div>
 
     <script>
         const playersData = [
-            { name: "Винисиус Жуниор", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
-            { name: "Лионель Месси", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
-            { name: "Усман Дембеле", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
-            { name: "Килиан Мбаппе", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
-            { name: "Эмерик Лапорт", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
-            { name: "Кевин Де Брюйне", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
+            { name: "Винисиус Жуниор", pts: 12, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Vin%C3%ADcius_J%C3%BAnior_2022.jpg/100px-Vin%C3%ADcius_J%C3%BAnior_2022.jpg" },
+            { name: "Лионель Месси", pts: 45, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022.jpg/100px-Lionel-Messi-Argentina-2022.jpg" },
+            { name: "Усман Дембеле", pts: 18, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Ousmane_Demb%C3%A9l%C3%A9_2023.jpg/100px-Ousmane_Demb%C3%A9l%C3%A9_2023.jpg" },
+            { name: "Килиан Мбаппе", pts: 32, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Kylian_Mbapp%C3%A9_2022.jpg/100px-Kylian_Mbapp%C3%A9_2022.jpg" },
+            { name: "Эмерик Лапорт", pts: 10, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Aymeric_Laporte_2023.jpg/100px-Aymeric_Laporte_2023.jpg" },
+            { name: "Кевин Де Брюйне", pts: 25, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kevin_De_Bruyne_2023.jpg/100px-Kevin_De_Bruyne_2023.jpg" }
+        ];
+
+        const matchesData = [
+            { date: "29.06.26", time: "20:00", team1: "Бразилия", team2: "Япония" },
+            { date: "29.06.26", time: "23:30", team1: "Германия", team2: "Парагвай" },
+            { date: "30.06.26", time: "04:00", team1: "Нидерланды", team2: "Марокко" }
         ];
 
         let expanded = false;
 
         function renderApp() {
-            document.getElementById('total-points').innerText = "0";
+            // Список игроков
             const list = document.getElementById('players-list');
             const displayLimit = expanded ? playersData.length : 3;
-            
             list.innerHTML = playersData.slice(0, displayLimit).map(p => `
                 <div class="player-row">
                     <div class="avatar" style="background-image: url('${p.img}')"></div>
@@ -75,14 +75,21 @@
                     <div class="pts">${p.pts}pts</div>
                 </div>
             `).join('');
-            
             document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
+
+            // Список матчей
+            document.getElementById('matches-list').innerHTML = matchesData.map(m => `
+                <div class="match-row">
+                    <div class="match-time">${m.date}<br>${m.time}</div>
+                    <div class="match-info">
+                        <div>${m.team1}</div>
+                        <div>${m.team2}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function toggleList() {
-            expanded = !expanded;
-            renderApp();
-        }
+        function toggleList() { expanded = !expanded; renderApp(); }
 
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
@@ -91,21 +98,7 @@
             el.classList.add('active');
         }
 
-        function updateTimer() {
-            const now = new Date();
-            const deadline = new Date();
-            deadline.setHours(21, 30, 0, 0);
-            if (now > deadline) deadline.setDate(deadline.getDate() + 1);
-            const diff = deadline - now;
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById('timer').innerText = `${h.toString().padStart(2, '0')}ч : ${m.toString().padStart(2, '0')}м : ${s.toString().padStart(2, '0')}с`;
-        }
-
         renderApp();
-        setInterval(updateTimer, 1000);
-        updateTimer();
         Telegram.WebApp.ready();
     </script>
 </body>
