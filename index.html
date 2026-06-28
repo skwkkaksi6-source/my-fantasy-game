@@ -6,24 +6,20 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; }
-        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; }
+        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; z-index: 10; }
         .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
         .tab.active { color: #fff; border-bottom: 2px solid #fff; }
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        /* Главная шапка */
         .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
         .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        /* Элементы списка */
         .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; background-color: #333; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; }
+        .avatar { width: 45px; height: 45px; background-color: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; flex-shrink: 0; }
         .pts { font-weight: bold; color: #a388ff; margin-left: auto; }
         
-        /* Матчи */
-        .match-time { font-size: 0.85em; color: #888; min-width: 70px; }
-        .flag { width: 25px; height: 18px; margin-right: 10px; border-radius: 2px; }
+        .match-time { font-size: 0.8em; color: #888; min-width: 60px; }
         .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
@@ -55,20 +51,31 @@
 
     <script>
         const playersData = [
-            { name: "Винисиус Жуниор", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p176297.png" },
+            { name: "Винисиус Жуниор", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
             { name: "Лионель Месси", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
             { name: "Усман Дембеле", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
             { name: "Килиан Мбаппе", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
-            { name: "Эмерик Лапорт", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p111180.png" },
-            { name: "Кевин Де Брюйне", pts: 0, img: "https://resources.premierleague.com/premierleague/photos/players/250x250/p61366.png" }
+            { name: "Эмерик Лапорт", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
+            { name: "Кевин Де Брюйне", pts: 0, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
         ];
 
         const matchesData = [
-            { date: "29.06", time: "20:00", t1: "Бразилия", t2: "Япония" },
-            { date: "29.06", time: "23:30", t1: "Германия", t2: "Парагвай" },
-            { date: "30.06", time: "04:00", t1: "Нидерланды", t2: "Марокко" },
-            { date: "30.06", time: "20:00", t1: "Кот-д'Ивуар", t2: "Норвегия" },
-            { date: "01.07", time: "00:00", t1: "Франция", t2: "Швеция" }
+            { d: "29.06", t: "20:00", t1: "Бразилия", t2: "Япония" },
+            { d: "29.06", t: "23:30", t1: "Германия", t2: "Парагвай" },
+            { d: "30.06", t: "04:00", t1: "Нидерланды", t2: "Марокко" },
+            { d: "30.06", t: "20:00", t1: "Кот-д'Ивуар", t2: "Норвегия" },
+            { d: "01.07", t: "00:00", t1: "Франция", t2: "Швеция" },
+            { d: "01.07", t: "04:00", t1: "Мексика", t2: "Эквадор" },
+            { d: "01.07", t: "19:00", t1: "Англия", t2: "ДР Конго" },
+            { d: "01.07", t: "23:00", t1: "Бельгия", t2: "Сенегал" },
+            { d: "02.07", t: "04:00", t1: "Южная Африка", t2: "Канада" },
+            { d: "02.07", t: "20:00", t1: "Испания", t2: "США" },
+            { d: "02.07", t: "23:30", t1: "Португалия", t2: "Иран" },
+            { d: "03.07", t: "04:00", t1: "Аргентина", t2: "Австралия" },
+            { d: "03.07", t: "20:00", t1: "Италия", t2: "Южная Корея" },
+            { d: "03.07", t: "23:30", t1: "Колумбия", t2: "Швейцария" },
+            { d: "04.07", t: "04:00", t1: "Уругвай", t2: "Хорватия" },
+            { d: "04.07", t: "20:00", t1: "Бразилия", t2: "Дания" }
         ];
 
         let expanded = false;
@@ -87,10 +94,10 @@
 
             document.getElementById('matches-list').innerHTML = matchesData.map(m => `
                 <div class="match-row">
-                    <div class="match-time">${m.date}<br>${m.time}</div>
-                    <div>
-                        <div style="margin-bottom: 5px;">${m.t1}</div>
-                        <div>${m.t2}</div>
+                    <div class="match-time">${m.d}<br>${m.t}</div>
+                    <div style="flex-grow: 1;">
+                        <div>${m.t1}</div>
+                        <div style="color: #aaa;">${m.t2}</div>
                     </div>
                 </div>
             `).join('');
