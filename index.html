@@ -7,22 +7,26 @@
     <style>
         body { background-color: #1a1a1a; color: white; font-family: sans-serif; margin: 0; }
         .tabs { display: flex; justify-content: space-around; background: #222; padding: 10px; }
-        .tab { cursor: pointer; color: #888; }
+        .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
         .tab.active { color: #fff; border-bottom: 2px solid #fff; }
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
+        
         .stats-header { background: #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
-        .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .main-button { background: white; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         .deadline-box { background: #4a2828; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
         .player-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
-        .avatar { width: 35px; height: 35px; background: #444; border-radius: 50%; margin-right: 15px; }
+        .avatar { width: 40px; height: 40px; background: #444; border-radius: 50%; margin-right: 15px; background-size: cover; background-position: center; }
         .pts { font-weight: bold; color: #7b61ff; margin-left: auto; }
+        
+        .toggle-btn { background: #333; border: none; color: white; width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="tabs">
         <div class="tab active" onclick="showTab('home', this)">Главная</div>
-        <div class="tab" onclick="showTab('team', this)">Моя команда</div>
+        <div class="tab" id="tab-team" onclick="showTab('team', this)">Моя команда</div>
         <div class="tab" onclick="showTab('matches', this)">Матчи</div>
     </div>
 
@@ -31,7 +35,7 @@
             <div>Раунд 4</div>
             <div id="total-points" style="font-size: 32px; font-weight: bold;">0</div>
             <div>всего очков</div>
-            <button class="main-button">УПРАВЛЯТЬ КОМАНДОЙ</button>
+            <button class="main-button" onclick="showTab('team', document.getElementById('tab-team'))">УПРАВЛЯТЬ КОМАНДОЙ</button>
         </div>
         
         <div class="deadline-box">
@@ -41,39 +45,46 @@
 
         <h3>Лучшие игроки</h3>
         <div id="players-list"></div>
+        <button id="toggle-btn" class="toggle-btn" onclick="toggleList()">Показать еще</button>
     </div>
 
-    <div id="team" class="content">...</div>
-    <div id="matches" class="content">...</div>
+    <div id="team" class="content">... Страница состава ...</div>
+    <div id="matches" class="content">... Список матчей ...</div>
 
     <script>
-        // Сюда мы будем добавлять игроков. 
-        // Система сама просуммирует очки для totalPoints.
+        // База игроков с фото
         const playersData = [
-            { name: "Винисиус Жуниор", pts: 41 },
-            { name: "Лионель Месси", pts: 39 },
-            { name: "Усман Дембеле", pts: 39 },
-            { name: "Килиан Мбаппе", pts: 39 },
-            { name: "Эмерик Лапорт", pts: 34 },
-            { name: "Кевин Де Брюйне", pts: 32 },
-            { name: "Джуд Беллингем", pts: 30 },
-            { name: "Букайо Сака", pts: 28 }
+            { name: "Винисиус Жуниор", pts: 41, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/238717.png" },
+            { name: "Лионель Месси", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/45843.png" },
+            { name: "Усман Дембеле", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/232717.png" },
+            { name: "Килиан Мбаппе", pts: 39, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/242250.png" },
+            { name: "Эмерик Лапорт", pts: 34, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/206969.png" },
+            { name: "Кевин Де Брюйне", pts: 32, img: "https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/175658.png" }
         ];
 
-        function renderApp() {
-            // Считаем сумму очков автоматически
-            const total = playersData.reduce((sum, p) => sum + p.pts, 0);
-            document.getElementById('total-points').innerText = total;
+        let expanded = false;
 
-            // Рендерим список
+        function renderApp() {
+            // Сумма очков
+            document.getElementById('total-points').innerText = playersData.reduce((sum, p) => sum + p.pts, 0);
+            
             const list = document.getElementById('players-list');
-            list.innerHTML = playersData.map(p => `
+            const displayLimit = expanded ? playersData.length : 3;
+            
+            list.innerHTML = playersData.slice(0, displayLimit).map(p => `
                 <div class="player-row">
-                    <div class="avatar"></div>
+                    <div class="avatar" style="background-image: url('${p.img}')"></div>
                     <div>${p.name}</div>
                     <div class="pts">${p.pts}pts</div>
                 </div>
             `).join('');
+            
+            document.getElementById('toggle-btn').innerText = expanded ? "Скрыть" : "Показать еще";
+        }
+
+        function toggleList() {
+            expanded = !expanded;
+            renderApp();
         }
 
         function showTab(tabId, el) {
