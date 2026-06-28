@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WC Fantasy FIX</title>
+<title>WC Fantasy 2.0 Real</title>
 
 <style>
 body{
@@ -46,34 +47,24 @@ border-bottom:2px solid #4cd964;
 .card{
 background:#151c26;
 padding:12px;
-margin-bottom:10px;
 border-radius:12px;
-}
-
-button{
-padding:10px;
-width:100%;
-border:none;
-border-radius:10px;
-background:#4cd964;
-font-weight:bold;
-margin-top:10px;
+margin-bottom:10px;
 }
 
 .match{
 display:flex;
 justify-content:space-between;
 padding:10px;
-background:#111826;
 margin:6px 0;
+background:#111826;
 border-radius:10px;
 }
 
 .player{
+padding:6px;
+margin:4px 0;
 background:#111826;
-padding:8px;
-border-radius:10px;
-margin:5px 0;
+border-radius:8px;
 }
 </style>
 </head>
@@ -81,7 +72,7 @@ margin:5px 0;
 <body>
 
 <div class="header">
-<div>⚽ WC Fantasy FIX</div>
+<div>⚽ WC Fantasy 2.0</div>
 <div id="total">0 pts</div>
 </div>
 
@@ -96,15 +87,14 @@ margin:5px 0;
 <div class="card">
 <h3>Очки тура</h3>
 <h1 id="gw">0</h1>
-
-<button onclick="updateFantasy()">Обновить очки</button>
+<button onclick="updateFantasy()">Обновить</button>
 </div>
 </div>
 
 <!-- TEAM -->
 <div class="screen">
 <div class="card">
-<h3>Моя команда</h3>
+<h3>Команда</h3>
 <div id="team"></div>
 </div>
 </div>
@@ -113,7 +103,7 @@ margin:5px 0;
 <div class="screen">
 <div class="card">
 <h3>Матчи</h3>
-<div id="matches"></div>
+<div id="matches">Загрузка...</div>
 </div>
 </div>
 
@@ -121,14 +111,14 @@ margin:5px 0;
 
 const API_KEY = "ВСТАВЬ_КЛЮЧ";
 
-/* 👤 ПРОСТАЯ КОМАНДА */
+/* 👤 ИГРОКИ (ID + НОРМАЛЬНАЯ БАЗА) */
 let team = [
-{ name:"Mbappé", pts:0 },
-{ name:"Messi", pts:0 },
-{ name:"Kane", pts:0 }
+{id: 44, name:"Mbappé", pts:0},
+{id: 85, name:"Messi", pts:0},
+{id: 110, name:"Kane", pts:0}
 ];
 
-/* TAB */
+/* NAV */
 function openTab(i,el){
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
 document.querySelectorAll(".screen")[i].classList.add("active");
@@ -171,17 +161,17 @@ return [];
 }
 }
 
-/* 🧠 REAL POINTS */
+/* 🧠 REAL ENGINE (NO RANDOM) */
 async function updateFantasy(){
 
 let matches = await getMatches();
 
-/* если API пустой */
 if(!matches.length){
 document.getElementById("matches").innerHTML = "Нет данных API";
 return;
 }
 
+/* reset */
 team.forEach(p => p.pts = 0);
 
 let total = 0;
@@ -198,20 +188,18 @@ events.forEach(e=>{
 
 if(!e.player) return;
 
-let name = e.player.name || "";
-
-/* goal */
-if(e.type==="Goal" && name.includes(p.name)){
+/* ⚽ GOAL */
+if(e.type === "Goal" && e.player.id === p.id){
 pts += 4;
 }
 
-/* card */
-if(e.type==="Card" && name.includes(p.name)){
+/* 🟨 CARD */
+if(e.type === "Card" && e.player.id === p.id){
 pts -= 1;
 }
 
-/* assist */
-if(e.assist && e.assist.name && e.assist.name.includes(p.name)){
+/* 🅰 ASSIST */
+if(e.assist && e.assist.id === p.id){
 pts += 3;
 }
 
@@ -231,17 +219,17 @@ renderMatches(matches);
 
 }
 
-/* 👤 TEAM UI */
+/* 👤 TEAM */
 function renderTeam(){
 
 document.getElementById("team").innerHTML =
 team.map(p=>`
-<div class="player">${p.name} — <b>${p.pts}</b></div>
+<div class="player">${p.name} — <b>${p.pts}</b> pts</div>
 `).join("");
 
 }
 
-/* 📅 MATCH UI */
+/* 📅 MATCHES */
 function renderMatches(matches){
 
 document.getElementById("matches").innerHTML =
@@ -257,7 +245,6 @@ matches.slice(0,10).map(m=>`
 
 /* INIT */
 updateFantasy();
-
 renderTeam();
 
 </script>
