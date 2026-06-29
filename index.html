@@ -3,165 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SofaScore Style Match App</title>
+    <title>Pro Match Center</title>
     <style>
-        /* Основные стили страницы */
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+        body { background-color: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+        
+        /* ГЛАВНЫЙ ЭКРАН */
+        #main-view { padding: 20px; }
+        .card { background-color: #1c1c1e; border-radius: 14px; padding: 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; }
+        .logo { width: 35px; height: 35px; background: #333; border-radius: 50%; margin: 0 10px; background-size: cover; }
+        .match-info { flex-grow: 1; }
+        .match-time { color: #888; font-size: 12px; }
+        .match-teams { font-weight: bold; font-size: 15px; }
 
-        h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #ffffff;
-        }
-
-        /* Карточка матча */
-        .card {
-            background-color: #1c1c1e;
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.2s;
-        }
-
-        .card:hover {
-            background-color: #252527;
-        }
-
-        .match-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Время и логотипы */
-        .time {
-            font-size: 13px;
-            color: #a0a0a0;
-            font-weight: 600;
-            min-width: 50px;
-        }
-
-        .badge {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #444444;
-            margin: 0 12px;
-        }
-
-        .team-name {
-            flex-grow: 1;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        /* Интерактивный колокольчик */
-        .bell {
-            font-size: 20px;
-            cursor: pointer;
-            color: #555555;
-            transition: color 0.2s;
-        }
-
-        .bell.active {
-            color: #ffeb3b;
-        }
-
-        /* Выпадающая статистика */
-        .details {
-            display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #333333;
-            font-size: 13px;
-            color: #a0a0a0;
-        }
-
-        /* Индикаторы формы (W/L/D) */
-        .form-indicator {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .w { background-color: #28a745; }
-        .l { background-color: #dc3545; }
-        .d { background-color: #6c757d; }
+        /* ДЕТАЛЬНЫЙ ЭКРАН */
+        #detail-view { display: none; }
+        .header-bar { padding: 20px; background: #1c1c1e; display: flex; align-items: center; gap: 15px; }
+        .stat-container { padding: 20px; }
+        .stat-block { background: #1c1c1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .section-title { font-size: 14px; color: #888; margin-bottom: 10px; text-transform: uppercase; }
+        .lineup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <h3>Матчи на сегодня</h3>
-    <div id="matches-list"></div>
+    <div id="main-view">
+        <h3>Матчи на сегодня</h3>
+        <div id="matches-list"></div>
+    </div>
+
+    <div id="detail-view">
+        <div class="header-bar" onclick="showMain()">
+            <span style="font-size: 20px;">←</span>
+            <div id="detail-header-text"></div>
+        </div>
+        <div class="stat-container" id="detail-content"></div>
+    </div>
 
     <script>
-        // Данные матчей
+        // ДАННЫЕ (Здесь будет приходить инфа от API)
         const matches = [
             { 
-                id: 1, 
-                time: "20:00", 
-                t1: "Бразилия", 
-                t2: "Япония", 
-                stats: "Личные встречи: 3 победы Бразилии, 0 побед Японии.",
-                form: ['w', 'w', 'l', 'w', 'd'] 
-            },
-            { 
-                id: 2, 
-                time: "23:30", 
-                t1: "Германия", 
-                t2: "Парагвай", 
-                stats: "Личные встречи: 1 победа Германии, 1 ничья.",
-                form: ['d', 'w', 'w', 'l', 'w'] 
+                id: 1, time: "20:00", t1: "Бразилия", t2: "Япония", 
+                logo1: "https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg", 
+                logo2: "https://upload.wikimedia.org/wikipedia/en/9/9e/Flag_of_Japan.svg",
+                odds: "1.45 / 4.20 / 7.10",
+                lineup: "Бразилия: Алиссон, Данило, Маркиньос... <br> Япония: Судзуки, Томиясу...",
+                history: "Последние 5: Бразилия (4W, 1D), Япония (2W, 3L)"
             }
         ];
 
-        // Функция открытия статистики
-        function toggleDetails(id) {
-            const el = document.getElementById('details-' + id);
-            el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+        function showMain() {
+            document.getElementById('main-view').style.display = 'block';
+            document.getElementById('detail-view').style.display = 'none';
         }
 
-        // Рендер списка
-        document.getElementById('matches-list').innerHTML = matches.map(m => `
-            <div class="card" onclick="toggleDetails(${m.id})">
-                <div class="match-header">
-                    <div class="time">${m.time}</div>
-                    <div class="badge"></div>
-                    <div class="team-name">${m.t1} — ${m.t2}</div>
-                    <div class="bell" 
-                         onclick="event.stopPropagation(); this.classList.toggle('active'); this.innerText = this.classList.contains('active') ? '🔔' : '🔕'">
-                         🔕
-                    </div>
+        function showDetail(id) {
+            const m = matches.find(match => match.id === id);
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('detail-view').style.display = 'block';
+            
+            document.getElementById('detail-header-text').innerHTML = `<strong>${m.t1} — ${m.t2}</strong>`;
+            document.getElementById('detail-content').innerHTML = `
+                <div class="stat-block">
+                    <div class="section-title">Коэффициенты</div>
+                    <div>${m.odds}</div>
                 </div>
-                
-                <div class="details" id="details-${m.id}">
-                    <strong>Последняя форма:</strong>
-                    <div class="form-indicator">
-                        ${m.form.map(f => `<div class="dot ${f}">${f.toUpperCase()}</div>`).join('')}
-                    </div>
-                    <strong>Статистика:</strong>
-                    <div style="margin-top: 5px;">${m.stats}</div>
+                <div class="stat-block">
+                    <div class="section-title">Ожидаемые составы</div>
+                    <div>${m.lineup}</div>
+                </div>
+                <div class="stat-block">
+                    <div class="section-title">История встреч и форма</div>
+                    <div>${m.history}</div>
+                </div>
+            `;
+        }
+
+        // РЕНДЕР СПИСКА
+        document.getElementById('matches-list').innerHTML = matches.map(m => `
+            <div class="card" onclick="showDetail(${m.id})">
+                <div class="match-time">${m.time}</div>
+                <div class="logo" style="background-image: url('${m.logo1}')"></div>
+                <div class="logo" style="background-image: url('${m.logo2}')"></div>
+                <div class="match-info">
+                    <div class="match-teams">${m.t1} — ${m.t2}</div>
                 </div>
             </div>
         `).join('');
