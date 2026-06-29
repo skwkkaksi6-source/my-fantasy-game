@@ -13,15 +13,22 @@
         .swiper-container { width: 100%; height: calc(100vh - 50px); }
         .swiper-slide { overflow-y: auto; padding: 15px; box-sizing: border-box; }
         
+        /* Блок показателей */
+        .stats-row { display: flex; justify-content: space-between; margin: 20px 0; text-align: center; }
+        .stat-item { flex: 1; }
+        .stat-value { font-size: 1.2em; font-weight: bold; }
+        .stat-label { color: #888; font-size: 0.8em; margin-top: 5px; }
+
+        .action-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        .timer { text-align: center; color: #ffeb3b; font-size: 1.2em; font-weight: bold; margin-top: 10px; }
+
+        /* Остальное */
         .field { background: #28a745; border-radius: 12px; padding: 20px; height: 350px; display: flex; flex-direction: column; justify-content: space-around; margin-bottom: 15px; }
         .pos-row { display: flex; justify-content: center; gap: 15px; }
         .avatar { width: 40px; height: 40px; background-color: #000; border-radius: 50%; }
         .avatar.sub { background-color: #fff; }
-        
         .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .main-button { background: #4a4af4; color: white; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .action-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
-        
         .row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
         .pts { margin-left: auto; color: #a388ff; font-weight: bold; }
         .my-row { background: #4a4af4; padding: 10px; border-radius: 8px; }
@@ -38,19 +45,18 @@
 
     <div class="swiper-container">
         <div class="swiper-wrapper">
-            <!-- Главная -->
             <div class="swiper-slide" id="home">
-                <div style="text-align: center; margin: 20px 0;">
-                    <div style="color: #888;">Раунд 4</div>
-                    <div style="font-size: 2em; font-weight: bold; margin: 5px 0;">0</div>
-                    <div style="color: #888; margin-bottom: 20px;">всего очков</div>
-                    <button class="action-button" onclick="slideTo(1)">УПРАВЛЯТЬ КОМАНДОЙ</button>
+                <div class="stats-row">
+                    <div class="stat-item"><div class="stat-value">0/15</div><div class="stat-label">ИГРОКИ</div></div>
+                    <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">ОЧКИ</div></div>
+                    <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">Р4</div></div>
                 </div>
-                <h3 onclick="toggleList()" style="cursor:pointer;">Лучшие игроки ▾</h3>
+                <button class="action-button" onclick="slideTo(1)">УПРАВЛЯТЬ КОМАНДОЙ</button>
+                <div id="timer" class="timer"></div>
+                <h3 onclick="toggleList()" style="cursor:pointer; margin-top: 30px;">Лучшие игроки ▾</h3>
                 <div id="players-list"></div>
             </div>
 
-            <!-- Команда -->
             <div class="swiper-slide" id="team">
                 <div class="field">
                     <div class="pos-row"><div class="avatar"></div></div>
@@ -60,35 +66,21 @@
                     <hr style="width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,0.2);">
                     <div class="pos-row"><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div></div>
                 </div>
-                <div class="info-card"><span>ⓘ Узнайте, как игроки получают очки</span><span>></span></div>
-                <div class="info-card" style="display: block; text-align: center;">
-                    <div style="font-weight: bold; margin-bottom: 5px;">Трансферы</div>
-                    <div style="color: #7b61ff; cursor: pointer;">См. историю трансферов</div>
-                </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="main-button">ЗАМЕНЫ</button>
                     <button class="main-button">ТРАНСФЕРЫ</button>
                 </div>
             </div>
 
-            <!-- Матчи -->
-            <div class="swiper-slide" id="matches">
-                <h3>1/16 финала ЧМ-2026</h3>
-                <div id="matches-list"></div>
-            </div>
+            <div class="swiper-slide" id="matches"><h3>Матчи</h3><div id="matches-list"></div></div>
 
-            <!-- Лиги -->
             <div class="swiper-slide" id="leagues">
                 <div id="leagues-list-view">
                     <h3>Публичные лиги</h3>
-                    <div class="info-card" onclick="openLeague()">
-                        <div><b>Global league</b><br><small>Глобальная лига</small></div>
-                        <div>Рейтинг 1<br>Тренеры 0</div>
-                    </div>
+                    <div class="info-card" onclick="openLeague()"><div><b>Global league</b></div></div>
                 </div>
                 <div id="league-detail-view" style="display:none;">
-                    <div class="back-btn" onclick="closeLeague()">← Назад к списку лиг</div>
-                    <h3>Турнирная таблица</h3>
+                    <div class="back-btn" onclick="closeLeague()">← Назад</div>
                     <div id="table-list"></div>
                 </div>
             </div>
@@ -104,8 +96,25 @@
         });
         function slideTo(index) { swiper.slideTo(index); }
 
-        // Список лучших (Топ-3 + раскрытие)
-        const playersData = [{name: "Игрок 1", pts: "0pts"}, {name: "Игрок 2", pts: "0pts"}, {name: "Игрок 3", pts: "0pts"}, {name: "Игрок 4", pts: "0pts"}];
+        // Таймер до 4 июля 2026, 10:00
+        function updateTimer() {
+            const deadline = new Date("July 4, 2026 10:00:00").getTime();
+            const now = new Date().getTime();
+            const diff = deadline - now;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerText = `До дедлайна: ${d}д ${h}ч ${m}м ${s}с`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Игроки
+        const playersData = [
+            {name: "Лионель Месси", pts: "0pts"}, {name: "Винисиус Жуниор", pts: "0pts"}, 
+            {name: "Килиан Мбаппе", pts: "0pts"}, {name: "Кевин Де Брюйне", pts: "0pts"}, {name: "Джуд Беллингем", pts: "0pts"}
+        ];
         let isExpanded = false;
         function renderPlayers() {
             const list = document.getElementById('players-list');
@@ -114,32 +123,6 @@
         }
         function toggleList() { isExpanded = !isExpanded; renderPlayers(); }
         renderPlayers();
-
-        // Сюда вставляй данные реальных пользователей из бота
-        const realUsersData = [{rank: 1, name: "Игрок ТГ 1", pts: 0}, {rank: 2, name: "Игрок ТГ 2", pts: 0}, {rank: 3, name: "Skwkkaksi", pts: 0}];
-        
-        function openLeague() {
-            document.getElementById('leagues-list-view').style.display = 'none';
-            document.getElementById('league-detail-view').style.display = 'block';
-            document.getElementById('table-list').innerHTML = realUsersData.map(u => `<div class="row ${u.name==='Skwkkaksi' ? 'my-row' : ''}"><div>${u.rank}.</div><div style="margin:0 15px">${u.name}</div><div class="pts">${u.pts}</div></div>`).join('');
-        }
-        function closeLeague() {
-            document.getElementById('league-detail-view').style.display = 'none';
-            document.getElementById('leagues-list-view').style.display = 'block';
-        }
-
-        // Матчи
-        const matchesData = [
-            { d: "28.06", t: "22:00", name: "ЮАР — Канада" }, { d: "29.06", t: "20:00", name: "Бразилия — Япония" },
-            { d: "29.06", t: "23:30", name: "Германия — Парагвай" }, { d: "30.06", t: "04:00", name: "Нидерланды — Марокко" },
-            { d: "30.06", t: "20:00", name: "Кот-д'Ивуар — Норвегия" }, { d: "01.07", t: "00:00", name: "Франция — Швеция" },
-            { d: "01.07", t: "04:00", name: "Мексика — Эквадор" }, { d: "01.07", t: "19:00", name: "Англия — ДР Конго" },
-            { d: "01.07", t: "23:00", name: "Бельгия — Сенегал" }, { d: "02.07", t: "03:00", name: "США — Босния и Герцеговина" },
-            { d: "02.07", t: "22:00", name: "Испания — Австрия" }, { d: "03.07", t: "02:00", name: "Португалия — Хорватия" },
-            { d: "03.07", t: "06:00", name: "Швейцария — Алжир" }, { d: "03.07", t: "21:00", name: "Австралия — Египет" },
-            { d: "04.07", t: "01:00", name: "Аргентина — Кабо-Верде" }, { d: "04.07", t: "04:30", name: "Колумбия — Гана" }
-        ];
-        document.getElementById('matches-list').innerHTML = matchesData.map(m => `<div class="row"><div style="color:#888; min-width:60px">${m.d}<br>${m.t}</div>${m.name}</div>`).join('');
 
         Telegram.WebApp.ready();
     </script>
