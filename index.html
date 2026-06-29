@@ -12,14 +12,15 @@
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        .field { background: #28a745; border-radius: 12px; padding: 20px; height: 300px; display: flex; flex-direction: column; justify-content: space-around; margin-bottom: 15px; }
+        /* Поле */
+        .field { background: #28a745; border-radius: 12px; padding: 20px; height: 350px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 15px; }
         .pos-row { display: flex; justify-content: center; gap: 15px; }
-        .avatar { width: 40px; height: 40px; background-color: #444; border-radius: 50%; }
+        .avatar { width: 40px; height: 40px; background-color: #000; border-radius: 50%; }
+        .avatar.sub { background-color: #fff; }
         
-        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .main-button { background: #4a4af4; color: white; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
-        .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .main-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .pts { margin-left: auto; color: #a388ff; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -30,48 +31,24 @@
     </div>
 
     <div id="home" class="content active">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; background: #1e1e1e; padding: 15px; border-radius: 8px;">
-            <span>Очков за тур: <b>0</b></span>
-            <span>Всего очков: <b>0</b></span>
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="color: #888;">Раунд 4</div>
+            <div style="font-size: 2em; font-weight: bold; margin: 5px 0;">0</div>
+            <div style="color: #888; margin-bottom: 20px;">всего очков</div>
+            <button class="main-button">УПРАВЛЯТЬ КОМАНДОЙ</button>
         </div>
-        <div class="info-card" onclick="alert('Переход к правилам очков')">
-            <span>ⓘ Узнайте, как игроки получают очки</span><span>></span>
-        </div>
-        <div class="info-card" style="display: block; text-align: center;">
-            <div style="font-weight: bold; margin-bottom: 5px;">Трансферы</div>
-            <div style="font-size: 0.8em; color: #888;">Планируете трансферы или используете текущий состав?</div>
-            <div style="color: #7b61ff; margin-top: 10px; cursor: pointer;">См. историю трансферов</div>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="main-button">ЗАМЕНЫ</button>
-            <button class="main-button">ТРАНСФЕРЫ</button>
-        </div>
+        <h3>Лучшие игроки</h3>
+        <div id="players-list"></div>
     </div>
 
     <div id="team" class="content">
         <div class="field">
-            <div class="pos-row"><div class="avatar" style="background: white;"></div></div>
-            <hr style="width: 90%; border: 0; border-top: 1px solid rgba(255,255,255,0.3);">
+            <div class="pos-row"><div class="avatar"></div></div>
+            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
             <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
             <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
-            <div class="pos-row"><div class="avatar"></div><div class="avatar"></div></div>
-        </div>
-        <!-- ВОЗВРАЩЕНЫ ЭЛЕМЕНТЫ В ТИМ -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; background: #1e1e1e; padding: 15px; border-radius: 8px;">
-            <span>Очков за тур: <b>0</b></span>
-            <span>Всего очков: <b>0</b></span>
-        </div>
-        <div class="info-card" onclick="alert('Переход к правилам очков')">
-            <span>ⓘ Узнайте, как игроки получают очки</span><span>></span>
-        </div>
-        <div class="info-card" style="display: block; text-align: center;">
-            <div style="font-weight: bold; margin-bottom: 5px;">Трансферы</div>
-            <div style="font-size: 0.8em; color: #888;">Планируете трансферы или используете текущий состав?</div>
-            <div style="color: #7b61ff; margin-top: 10px; cursor: pointer;">См. историю трансферов</div>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="main-button">ЗАМЕНЫ</button>
-            <button class="main-button">ТРАНСФЕРЫ</button>
+            <hr style="width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,0.2);">
+            <div class="pos-row"><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div></div>
         </div>
     </div>
 
@@ -81,15 +58,20 @@
     </div>
 
     <script>
+        const playersData = [{name: "Винисиус Жуниор", pts: "0pts"}, {name: "Лионель Месси", pts: "0pts"}, {name: "Усман Дембеле", pts: "0pts"}, {name: "Килиан Мбаппе", pts: "0pts"}, {name: "Эмерик Лапорт", pts: "0pts"}, {name: "Кевин Де Брюйне", pts: "0pts"}];
+        document.getElementById('players-list').innerHTML = playersData.map(p => `<div class="player-row"><div class="avatar" style="margin-right:15px"></div>${p.name}<div class="pts">${p.pts}</div></div>`).join('');
+
         const matchesData = [
-            { d: "28.06", t: "22:00", name: "ЮАР — Канада" },
-            { d: "29.06", t: "20:00", name: "Бразилия — Япония" },
-            { d: "29.06", t: "23:30", name: "Германия — Парагвай" },
-            { d: "30.06", t: "04:00", name: "Нидерланды — Марокко" }
+            { d: "28.06", t: "22:00", name: "ЮАР — Канада" }, { d: "29.06", t: "20:00", name: "Бразилия — Япония" },
+            { d: "29.06", t: "23:30", name: "Германия — Парагвай" }, { d: "30.06", t: "04:00", name: "Нидерланды — Марокко" },
+            { d: "30.06", t: "20:00", name: "Кот-д'Ивуар — Норвегия" }, { d: "01.07", t: "00:00", name: "Франция — Швеция" },
+            { d: "01.07", t: "04:00", name: "Мексика — Эквадор" }, { d: "01.07", t: "19:00", name: "Англия — ДР Конго" },
+            { d: "01.07", t: "23:00", name: "Бельгия — Сенегал" }, { d: "02.07", t: "03:00", name: "США — Босния и Герцеговина" },
+            { d: "02.07", t: "22:00", name: "Испания — Австрия" }, { d: "03.07", t: "02:00", name: "Португалия — Хорватия" },
+            { d: "03.07", t: "06:00", name: "Швейцария — Алжир" }, { d: "03.07", t: "21:00", name: "Австралия — Египет" },
+            { d: "04.07", t: "01:00", name: "Аргентина — Кабо-Верде" }, { d: "04.07", t: "04:30", name: "Колумбия — Гана" }
         ];
-        document.getElementById('matches-list').innerHTML = matchesData.map(m => 
-            `<div class="match-row"><div style="color:#888; min-width:60px">${m.d}<br>${m.t}</div>${m.name}</div>`
-        ).join('');
+        document.getElementById('matches-list').innerHTML = matchesData.map(m => `<div class="match-row"><div style="color:#888; min-width:60px">${m.d}<br>${m.t}</div>${m.name}</div>`).join('');
 
         function showTab(tabId, el) {
             document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
