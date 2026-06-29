@@ -2,105 +2,105 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Match Center - Ultimate Version</title>
+    <title>Pro Match Center - Full Final</title>
     <style>
         body { background-color: #121212; color: #ffffff; font-family: sans-serif; margin: 0; padding: 0; }
         
-        /* ГЛАВНАЯ И НАВИГАЦИЯ */
-        .date-slider { display: flex; gap: 12px; padding: 20px; overflow-x: auto; background-color: #1c1c1e; border-bottom: 1px solid #333; }
+        /* ГЛАВНЫЙ ЭКРАН */
+        .date-slider { display: flex; gap: 12px; padding: 20px; overflow-x: auto; background-color: #1c1c1e; }
         .date-btn { background-color: #2c2c2e; padding: 12px 20px; border-radius: 12px; cursor: pointer; }
         .date-btn.active { background-color: #007bff; }
-
-        /* БЛОКИ СТАТИСТИКИ */
-        .stat-block { background-color: #1c1c1e; padding: 20px; border-radius: 16px; margin: 15px; }
+        
+        .match-card { background-color: #1c1c1e; border-radius: 16px; padding: 20px; margin: 15px; display: flex; align-items: center; cursor: pointer; border: 1px solid #2a2a2a; }
+        .bell-btn { font-size: 24px; cursor: pointer; padding: 5px; }
+        .bell-btn.active { color: #ffeb3b; }
+        
+        /* ДЕТАЛЬНЫЙ ЭКРАН */
+        #detail-view { display: none; padding: 20px; }
+        .back-nav { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 20px; color: #007bff; font-weight: 600; }
+        
+        .stat-block { background-color: #1c1c1e; padding: 20px; border-radius: 16px; margin-bottom: 20px; }
         .section-title { font-size: 14px; color: #888; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; }
-
-        /* ФУТБОЛЬНОЕ ПОЛЕ */
-        .pitch-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        
+        /* ПОЛЕ 11Х11 */
+        .pitch-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .pitch-side { background-color: #2e7d32; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 5px; align-items: center; }
-        .player-label { font-size: 11px; background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 4px; width: 80%; text-align: center; }
-
-        /* СТАТИСТИКА ФОРМЫ */
+        .player-label { font-size: 10px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 4px; width: 85%; text-align: center; }
+        
+        /* СТАТИСТИКА И ЛИЧКИ */
         .history-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
-        .dot { width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; }
-        .w { background: #28a745; }
-        .l { background: #dc3545; }
+        .dot { width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; }
+        .w { background: #28a745; } .l { background: #dc3545; }
     </style>
 </head>
 <body>
 
-    <div class="date-slider">
-        <div class="date-btn">ПН 29</div>
-        <div class="date-btn active">ВТ 30</div>
+    <div id="main-view">
+        <div class="date-slider">
+            <div class="date-btn">ПН 29</div>
+            <div class="date-btn active">ВТ 30</div>
+        </div>
+        
+        <div class="match-card">
+            <div style="flex-grow: 1; display: flex; align-items: center;" onclick="openDetails()">
+                <div style="font-size: 12px; color: #888;">20:00</div>
+                <div style="margin-left: 20px; font-weight: bold;">Бразилия — Япония</div>
+            </div>
+            <div class="bell-btn" onclick="toggleBell(this)">🔕</div>
+        </div>
     </div>
 
-    <!-- ДЕТАЛЬНЫЙ ЭКРАН -->
     <div id="detail-view">
-        <div onclick="history.back()" style="padding: 20px; cursor: pointer;">← Назад</div>
-
-        <!-- ПОЛЕ 11 НА 11 -->
+        <div class="back-nav" onclick="closeDetails()"><span>←</span> Назад к списку</div>
+        
         <div class="stat-block">
-            <div class="section-title">Ожидаемые составы (11 vs 11)</div>
+            <div class="section-title">Ожидаемые составы</div>
             <div class="pitch-container">
                 <div class="pitch-side">
                     <div style="font-weight:bold; margin-bottom:5px;">БРАЗИЛИЯ</div>
-                    <div class="player-label">Алиссон</div>
-                    <div class="player-label">Данило</div>
-                    <div class="player-label">Маркиньос</div>
-                    <div class="player-label">Милитао</div>
-                    <div class="player-label">Арана</div>
-                    <div class="player-label">Гимараес</div>
-                    <div class="player-label">Луис</div>
-                    <div class="player-label">Пакета</div>
-                    <div class="player-label">Рафинья</div>
-                    <div class="player-label">Винисиус</div>
-                    <div class="player-label">Эндрик</div>
+                    <div class="player-label">Алиссон</div><div class="player-label">Данило</div><div class="player-label">Маркиньос</div>
+                    <div class="player-label">Милитао</div><div class="player-label">Арана</div><div class="player-label">Гимараес</div>
+                    <div class="player-label">Луис</div><div class="player-label">Пакета</div><div class="player-label">Рафинья</div>
+                    <div class="player-label">Винисиус</div><div class="player-label">Эндрик</div>
                 </div>
                 <div class="pitch-side">
                     <div style="font-weight:bold; margin-bottom:5px;">ЯПОНИЯ</div>
-                    <div class="player-label">Судзуки</div>
-                    <div class="player-label">Сугавара</div>
-                    <div class="player-label">Итакура</div>
-                    <div class="player-label">Матида</div>
-                    <div class="player-label">Ито</div>
-                    <div class="player-label">Эндо</div>
-                    <div class="player-label">Морита</div>
-                    <div class="player-label">Доан</div>
-                    <div class="player-label">Минамино</div>
-                    <div class="player-label">Митому</div>
-                    <div class="player-label">Уэда</div>
+                    <div class="player-label">Судзуки</div><div class="player-label">Сугавара</div><div class="player-label">Итакура</div>
+                    <div class="player-label">Матида</div><div class="player-label">Ито</div><div class="player-label">Эндо</div>
+                    <div class="player-label">Морита</div><div class="player-label">Доан</div><div class="player-label">Минамино</div>
+                    <div class="player-label">Митому</div><div class="player-label">Уэда</div>
                 </div>
             </div>
         </div>
 
-        <!-- СТАТИСТИКА ФОРМЫ -->
         <div class="stat-block">
             <div class="section-title">Последние 5 матчей</div>
-            <div class="history-row">
-                <span>Бразилия</span>
-                <div style="display:flex; gap:5px;">
-                    <div class="dot w">W</div><div class="dot w">W</div><div class="dot l">L</div><div class="dot w">W</div><div class="dot w">W</div>
-                </div>
-            </div>
-            <div class="history-row">
-                <span>Япония</span>
-                <div style="display:flex; gap:5px;">
-                    <div class="dot w">W</div><div class="dot l">L</div><div class="dot w">W</div><div class="dot w">W</div><div class="dot w">W</div>
-                </div>
-            </div>
+            <div class="history-row"><span>Бразилия</span><div style="display:flex; gap:5px;"><div class="dot w">W</div><div class="dot w">W</div><div class="dot l">L</div><div class="dot w">W</div><div class="dot w">W</div></div></div>
+            <div class="history-row"><span>Япония</span><div style="display:flex; gap:5px;"><div class="dot w">W</div><div class="dot l">L</div><div class="dot w">W</div><div class="dot w">W</div><div class="dot w">W</div></div></div>
         </div>
 
-        <!-- ЛИЧНЫЕ ВСТРЕЧИ -->
         <div class="stat-block">
             <div class="section-title">Личные встречи</div>
             <div style="font-size: 13px; line-height: 1.6;">
-                2023: Бразилия 3:0 Япония<br>
-                2021: Япония 0:2 Бразилия<br>
-                2019: Бразилия 1:1 Япония
+                Бразилия 3:0 Япония<br>Япония 0:2 Бразилия<br>Бразилия 1:1 Япония
             </div>
         </div>
     </div>
 
+    <script>
+        function openDetails() {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('detail-view').style.display = 'block';
+        }
+        function closeDetails() {
+            document.getElementById('main-view').style.display = 'block';
+            document.getElementById('detail-view').style.display = 'none';
+        }
+        function toggleBell(el) {
+            event.stopPropagation();
+            el.classList.toggle('active');
+            el.innerText = el.classList.contains('active') ? '🔔' : '🔕';
+        }
+    </script>
 </body>
 </html>
