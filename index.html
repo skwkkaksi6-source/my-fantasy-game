@@ -31,6 +31,41 @@
         .history-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
         .dot { width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; }
         .w { background: #28a745; } .l { background: #dc3545; }
+        /* КНОПКИ КОЭФФИЦИЕНТОВ */
+.odds-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Три равные колонки */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.odd-button {
+    background-color: #252527;
+    border: 1px solid #333;
+    padding: 12px 5px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.odd-button:hover {
+    background-color: #333335;
+}
+
+.odd-name {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.odd-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffeb3b; /* Золотистый цвет для кэфов */
+}
+        
     </style>
 </head>
 <body>
