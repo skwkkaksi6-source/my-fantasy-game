@@ -1,253 +1,185 @@
+import express from "express";
+import fetch from "node-fetch";
+import cors from "cors";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const app = express();
+app.use(cors());
+
+const API_KEY = process.env.FOOTBALL_API_KEY;
+
+/* ================= LIVE ================= */
+app.get("/live", async (req, res) => {
+  try {
+    const r = await fetch(
+      "https://api-football-v1.p.rapidapi.com/v3/fixtures?live=all",
+      {
+        headers: {
+          "X-RapidAPI-Key": API_KEY,
+          "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+        }
+      }
+    );
+
+    res.json(await r.json());
+  } catch {
+    res.status(500).json({ error: "live error" });
+  }
+});
+
+/* ================= PLAYERS ================= */
+app.get("/players", async (req, res) => {
+  try {
+    const r = await fetch(
+      "https://api-football-v1.p.rapidapi.com/v3/players?league=39&season=2024",
+      {
+        headers: {
+          "X-RapidAPI-Key": API_KEY,
+          "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+        }
+      }
+    );
+
+    res.json(await r.json());
+  } catch {
+    res.status(500).json({ error: "players error" });
+  }
+});
+
+/* ================= START ================= */
+app.listen(3000, () => console.log("RUNNING"));
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WC Fantasy 2.0 Real</title>
-
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:#0b0f14;
-color:white;
-}
-
-.header{
-display:flex;
-justify-content:space-between;
-padding:12px;
-background:#111826;
-position:sticky;
-top:0;
-}
-
-.tabs{
-display:flex;
-background:#111826;
-}
-
-.tab{
-flex:1;
-text-align:center;
-padding:10px;
-color:#aaa;
-cursor:pointer;
-}
-
-.tab.active{
-color:#4cd964;
-border-bottom:2px solid #4cd964;
-}
-
-.screen{display:none;padding:12px}
-.screen.active{display:block}
-
-.card{
-background:#151c26;
-padding:12px;
-border-radius:12px;
-margin-bottom:10px;
-}
-
-.match{
-display:flex;
-justify-content:space-between;
-padding:10px;
-margin:6px 0;
-background:#111826;
-border-radius:10px;
-}
-
-.player{
-padding:6px;
-margin:4px 0;
-background:#111826;
-border-radius:8px;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Fantasy</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="header">
-<div>⚽ WC Fantasy 2.0</div>
-<div id="total">0 pts</div>
-</div>
+<div id="app">Loading...</div>
 
-<div class="tabs">
-<div class="tab active" onclick="openTab(0,this)">Главная</div>
-<div class="tab" onclick="openTab(1,this)">Команда</div>
-<div class="tab" onclick="openTab(2,this)">Матчи</div>
-</div>
-
-<!-- HOME -->
-<div class="screen active">
-<div class="card">
-<h3>Очки тура</h3>
-<h1 id="gw">0</h1>
-<button onclick="updateFantasy()">Обновить</button>
-</div>
-</div>
-
-<!-- TEAM -->
-<div class="screen">
-<div class="card">
-<h3>Команда</h3>
-<div id="team"></div>
-</div>
-</div>
-
-<!-- MATCHES -->
-<div class="screen">
-<div class="card">
-<h3>Матчи</h3>
-<div id="matches">Загрузка...</div>
-</div>
-</div>
-
-<script>
-
-const API_KEY = "ВСТАВЬ_КЛЮЧ";
-
-/* 👤 ИГРОКИ (ID + НОРМАЛЬНАЯ БАЗА) */
-let team = [
-{id: 44, name:"Mbappé", pts:0},
-{id: 85, name:"Messi", pts:0},
-{id: 110, name:"Kane", pts:0}
-];
-
-/* NAV */
-function openTab(i,el){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll(".screen")[i].classList.add("active");
-
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-el.classList.add("active");
-}
-
-/* ⚽ MATCHES SAFE */
-async function getMatches(){
-try{
-const res = await fetch(
-"https://v3.football.api-sports.io/fixtures?season=2022&league=1",
-{
-headers:{ "x-apisports-key": API_KEY }
-}
-);
-
-const data = await res.json();
-return data.response || [];
-}catch(e){
-return [];
-}
-}
-
-/* ⚽ EVENTS SAFE */
-async function getEvents(id){
-try{
-const res = await fetch(
-`https://v3.football.api-sports.io/fixtures/events?fixture=${id}`,
-{
-headers:{ "x-apisports-key": API_KEY }
-}
-);
-
-const data = await res.json();
-return data.response || [];
-}catch(e){
-return [];
-}
-}
-
-/* 🧠 REAL ENGINE (NO RANDOM) */
-async function updateFantasy(){
-
-let matches = await getMatches();
-
-if(!matches.length){
-document.getElementById("matches").innerHTML = "Нет данных API";
-return;
-}
-
-/* reset */
-team.forEach(p => p.pts = 0);
-
-let total = 0;
-
-for(let m of matches.slice(0,5)){
-
-let events = await getEvents(m.fixture.id);
-
-for(let p of team){
-
-let pts = 0;
-
-events.forEach(e=>{
-
-if(!e.player) return;
-
-/* ⚽ GOAL */
-if(e.type === "Goal" && e.player.id === p.id){
-pts += 4;
-}
-
-/* 🟨 CARD */
-if(e.type === "Card" && e.player.id === p.id){
-pts -= 1;
-}
-
-/* 🅰 ASSIST */
-if(e.assist && e.assist.id === p.id){
-pts += 3;
-}
-
-});
-
-p.pts += pts;
-total += pts;
-
-}
-
-}
-
-document.getElementById("total").innerText = total + " pts";
-
-renderTeam();
-renderMatches(matches);
-
-}
-
-/* 👤 TEAM */
-function renderTeam(){
-
-document.getElementById("team").innerHTML =
-team.map(p=>`
-<div class="player">${p.name} — <b>${p.pts}</b> pts</div>
-`).join("");
-
-}
-
-/* 📅 MATCHES */
-function renderMatches(matches){
-
-document.getElementById("matches").innerHTML =
-matches.slice(0,10).map(m=>`
-<div class="match">
-<div>${m.teams.home.name}</div>
-<b>${m.goals.home ?? 0}-${m.goals.away ?? 0}</b>
-<div>${m.teams.away.name}</div>
-</div>
-`).join("");
-
-}
-
-/* INIT */
-updateFantasy();
-renderTeam();
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b0f19;
+  color: white;
+}
+
+.card {
+  margin: 10px;
+  padding: 10px;
+  background: #1c2233;
+  border-radius: 10px;
+}
+
+button {
+  padding: 6px 10px;
+  margin-top: 5px;
+  border: none;
+  background: #2d6bff;
+  color: white;
+  border-radius: 8px;
+}
+const API = "https://YOUR-BACKEND-URL";
+
+let team = JSON.parse(localStorage.getItem("team")) || [];
+let budget = JSON.parse(localStorage.getItem("budget")) || 100;
+
+function save() {
+  localStorage.setItem("team", JSON.stringify(team));
+  localStorage.setItem("budget", budget);
+}
+
+/* ========== LIVE ========== */
+async function load() {
+  const res = await fetch(API + "/live");
+  const data = await res.json();
+
+  const matches = data.response || [];
+
+  document.getElementById("app").innerHTML = `
+    <h1>⚽ Fantasy System</h1>
+
+    <h2>Live</h2>
+
+    ${matches.map(m => `
+      <div class="card">
+        ${m.teams.home.name} ${m.goals.home ?? 0} - ${m.goals.away ?? 0} ${m.teams.away.name}
+      </div>
+    `).join("")}
+
+    <h2>Team</h2>
+
+    ${team.map(p => `
+      <div class="card">
+        ${p.name} | ${p.price}$
+        <button onclick="sell(${p.id})">Sell</button>
+      </div>
+    `).join("")}
+
+    <h3>Budget: ${budget}$</h3>
+
+    <button onclick="openTransfers()">Transfers</button>
+  `;
+}
+
+/* ========== TRANSFERS ========== */
+async function openTransfers() {
+  const res = await fetch(API + "/players");
+  const data = await res.json();
+
+  const list = data.response?.slice(0, 20) || [];
+
+  document.getElementById("app").innerHTML = `
+    <h2>Transfers</h2>
+
+    ${list.map(p => `
+      <div class="card">
+        ${p.player.name}
+        <button onclick="buy('${p.player.name}')">Buy</button>
+      </div>
+    `).join("")}
+
+    <button onclick="load()">Back</button>
+  `;
+}
+
+/* ========== BUY / SELL ========== */
+function buy(name) {
+  const price = Math.floor(Math.random() * 10 + 5);
+
+  if (budget < price) return alert("No money");
+
+  team.push({
+    id: Date.now(),
+    name,
+    price
+  });
+
+  budget -= price;
+
+  save();
+  load();
+}
+
+function sell(id) {
+  const p = team.find(x => x.id === id);
+  if (!p) return;
+
+  budget += p.price;
+  team = team.filter(x => x.id !== id);
+
+  save();
+  load();
+}
+
+/* ========== LOOP ========== */
+load();
+setInterval(load, 5 * 60 * 1000);
