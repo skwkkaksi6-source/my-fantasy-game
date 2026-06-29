@@ -10,6 +10,15 @@
         .date-slider { display: flex; gap: 12px; padding: 20px; overflow-x: auto; background-color: #1c1c1e; }
         .date-btn { background-color: #2c2c2e; padding: 12px 20px; border-radius: 12px; cursor: pointer; }
         .date-btn.active { background-color: #007bff; }
+
+        /* Дополнительные настройки для ограничения ширины */
+.pitch-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 600px; /* Ограничивает общую ширину блока */
+    margin: 0 auto;   /* Центрирует блок на экране */
+}
         
         .match-card { background-color: #1c1c1e; border-radius: 16px; padding: 20px; margin: 15px; display: flex; align-items: center; cursor: pointer; border: 1px solid #2a2a2a; }
         .bell-btn { font-size: 24px; cursor: pointer; padding: 5px; }
