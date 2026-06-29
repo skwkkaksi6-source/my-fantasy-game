@@ -6,29 +6,22 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
-        body { background-color: #121212; color: #fff; font-family: sans-serif; margin: 0; }
-        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; z-index: 100; }
-        .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
-        .tab.active { color: #fff; border-bottom: 2px solid #fff; }
+        body { background-color: #121212; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; margin: 0; }
+        .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 12px; position: sticky; top: 0; z-index: 100; font-size: 14px; }
+        .tab { cursor: pointer; color: #888; }
+        .tab.active { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 5px; }
         .swiper-container { width: 100%; height: calc(100vh - 50px); }
         .swiper-slide { overflow-y: auto; padding: 15px; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: #1e1e1e; padding: 15px; border-radius: 10px; text-align: center; }
-        .stat-val { font-size: 18px; font-weight: bold; }
-        .stat-lbl { color: #888; font-size: 11px; text-transform: uppercase; margin-top: 4px; }
+        .stat-card { background: #1e1e1e; padding: 12px; border-radius: 10px; text-align: center; }
+        .stat-val { font-size: 16px; font-weight: bold; }
+        .stat-lbl { color: #888; font-size: 10px; text-transform: uppercase; margin-top: 4px; }
 
-        .action-button { background: #fff; color: black; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; }
-        .timer { text-align: center; color: #ffeb3b; font-size: 1.2em; font-weight: bold; margin: 15px 0; }
-        
-        .player-row { background: #1e1e1e; padding: 10px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; }
-        .player-photo { width: 35px; height: 35px; border-radius: 50%; background: #444; margin-right: 12px; }
-        .player-info { flex-grow: 1; }
-        .rating { background: #28a745; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-        
-        /* Модальное окно деталей */
-        #details-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; padding: 20px; z-index: 1000; }
-        .row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .match-card { background: #1e1e1e; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .match-info { font-size: 11px; color: #888; text-align: center; width: 60px; }
+        .team-row { flex-grow: 1; padding: 0 15px; font-size: 14px; }
+        .score { font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -47,24 +40,13 @@
                     <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Очки</div></div>
                     <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Р4</div></div>
                 </div>
-                <button class="action-button" onclick="slideTo(1)">УПРАВЛЯТЬ КОМАНДОЙ</button>
-                <div id="timer" class="timer"></div>
-                
-                <h3>Лучший состав прошлого тура</h3>
-                <div id="best-squad-container" style="background:#1e1e1e; padding:15px; border-radius:10px;">Схема: 4-3-3</div>
-
-                <h3>Лучшие игроки тура</h3>
-                <div id="players-container"></div>
+                <h3 style="font-size: 16px;">Расписание</h3>
+                <div id="main-matches"></div>
             </div>
-            <div class="swiper-slide">Команда...</div>
-            <div class="swiper-slide">Матчи...</div>
-            <div class="swiper-slide">Лиги...</div>
+            <div class="swiper-slide"><h3>Моя команда</h3></div>
+            <div class="swiper-slide"><h3>Все матчи</h3><div id="all-matches"></div></div>
+            <div class="swiper-slide"><h3>Лиги</h3></div>
         </div>
-    </div>
-
-    <div id="details-overlay" onclick="this.style.display='none'">
-        <h2>Статистика игрока</h2>
-        <p id="player-details"></p>
     </div>
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -74,30 +56,23 @@
         }}});
         function slideTo(index) { swiper.slideTo(index); }
 
-        const players = [
-            {name: "К. Мбаппе", team: "Франция", rating: "8.9", goals: 2, pass: 1},
-            {name: "Л. Месси", team: "Аргентина", rating: "8.7", goals: 1, pass: 2},
-            {name: "Д. Беллингем", team: "Англия", rating: "8.4", goals: 1, pass: 0}
+        const matchesData = [
+            { d: "29.06", t: "20:00", t1: "Бразилия", t2: "Япония", s: "_" },
+            { d: "29.06", t: "23:30", t1: "Германия", t2: "Парагвай", s: "—" },
+            { d: "30.06", t: "04:00", t1: "Нидерланды", t2: "Марокко", s: "—" }
         ];
 
-        function showDetails(p) {
-            document.getElementById('player-details').innerHTML = `${p.name} (${p.team})<br>Оценка: ${p.rating}<br>Голы: ${p.goals}<br>Пасы: ${p.pass}`;
-            document.getElementById('details-overlay').style.display = 'block';
-        }
+        const renderMatches = (data, id) => {
+            document.getElementById(id).innerHTML = data.map(m => `
+                <div class="match-card">
+                    <div class="match-info">${m.d}<br>${m.t}</div>
+                    <div class="team-row">${m.t1}<br>${m.t2}</div>
+                    <div class="score">${m.s}</div>
+                </div>`).join('');
+        };
 
-        const container = document.getElementById('players-container');
-        container.innerHTML = players.map(p => `
-            <div class="player-row" onclick='showDetails(${JSON.stringify(p)})'>
-                <div class="player-photo"></div>
-                <div class="player-info"><div>${p.name}</div><div style="color:#888; font-size:12px">${p.team}</div></div>
-                <div class="rating">${p.rating}</div>
-            </div>`).join('');
-        
-        function updateTimer() {
-            const diff = new Date("July 4, 2026 10:00:00") - new Date();
-            document.getElementById('timer').innerText = `До дедлайна: ${Math.floor(diff/86400000)}д ${Math.floor(diff%86400000/3600000)}ч ${Math.floor(diff%3600000/60000)}м`;
-        }
-        setInterval(updateTimer, 1000); updateTimer();
+        renderMatches(matchesData, 'main-matches');
+        renderMatches(matchesData, 'all-matches');
     </script>
 </body>
 </html>
