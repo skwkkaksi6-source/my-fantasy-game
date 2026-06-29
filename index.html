@@ -18,8 +18,25 @@
     gap: 10px;
     max-width: 600px; /* Ограничивает общую ширину блока */
     margin: 0 auto;   /* Центрирует блок на экране */
+/* Блок технической информации */
+.info-card {
+    background-color: #1c1c1e;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
-        
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 14px;
+}
+
+.info-label { color: #888; display: flex; align-items: center; gap: 10px; }
+.info-value { font-weight: 600; }
+    
         .match-card { background-color: #1c1c1e; border-radius: 16px; padding: 20px; margin: 15px; display: flex; align-items: center; cursor: pointer; border: 1px solid #2a2a2a; }
         .bell-btn { font-size: 24px; cursor: pointer; padding: 5px; }
         .bell-btn.active { color: #ffeb3b; }
@@ -96,6 +113,28 @@
 
     <div id="detail-view">
         <div class="back-nav" onclick="closeDetails()"><span>←</span> Назад к списку</div>
+ <div class="info-card">
+    <div class="info-row">
+        <div class="info-label">🏆 Соревнование</div>
+        <div class="info-value">Чемпионат Мира 2026</div>
+    </div>
+    <div class="info-row">
+        <div class="info-label">📍 Стадион</div>
+        <div class="info-value">NRG Stadium</div>
+    </div>
+    <div class="info-row">
+        <div class="info-label">🕒 Начало</div>
+        <div class="info-value">20:00</div>
+    </div>
+    <div class="info-row">
+        <div class="info-label">📅 Дата</div>
+        <div class="info-value">пн, 29 июн. 2026 г.</div>
+    </div>
+    <div class="info-row">
+        <div class="info-label">👤 Арбитр</div>
+        <div class="info-value">M. Mariani</div>
+    </div>
+ </div>
         
         <div class="stat-block">
             <div class="section-title">Ожидаемые составы</div>
