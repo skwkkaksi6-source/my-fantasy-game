@@ -6,29 +6,37 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; overflow-x: hidden; }
+        body { background-color: #121212; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; margin: 0; }
         .tabs { display: flex; justify-content: space-around; background: #1e1e1e; padding: 10px; position: sticky; top: 0; z-index: 100; }
         .tab { cursor: pointer; color: #888; padding-bottom: 5px; }
         .tab.active { color: #fff; border-bottom: 2px solid #fff; }
         .swiper-container { width: 100%; height: calc(100vh - 50px); }
         .swiper-slide { overflow-y: auto; padding: 15px; box-sizing: border-box; }
-        
-        .stats-row { display: flex; justify-content: space-between; margin: 20px 0; text-align: center; }
-        .stat-value { font-size: 1.2em; font-weight: bold; }
-        .stat-label { color: #888; font-size: 0.8em; margin-top: 5px; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: #1e1e1e; padding: 15px; border-radius: 10px; text-align: center; }
+        .stat-val { font-size: 18px; font-weight: bold; }
+        .stat-lbl { color: #888; font-size: 11px; text-transform: uppercase; margin-top: 4px; }
 
         .action-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
-        .timer { text-align: center; color: #ffeb3b; font-size: 1.2em; font-weight: bold; margin-top: 10px; }
+        .timer { text-align: center; color: #ffeb3b; font-size: 1.2em; font-weight: bold; margin: 15px 0; }
 
+        /* SofaScore Style */
+        .player-row { background: #1e1e1e; padding: 10px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; }
+        .player-photo { width: 35px; height: 35px; border-radius: 50%; background: #333; margin-right: 12px; }
+        .player-info { flex-grow: 1; }
+        .player-name { font-weight: 500; font-size: 14px; }
+        .player-team { color: #888; font-size: 12px; }
+        .rating { background: #28a745; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        
         .field { background: #28a745; border-radius: 12px; padding: 20px; height: 350px; display: flex; flex-direction: column; justify-content: space-around; margin-bottom: 15px; }
         .pos-row { display: flex; justify-content: center; gap: 15px; }
         .avatar { width: 40px; height: 40px; background-color: #000; border-radius: 50%; }
         .avatar.sub { background-color: #fff; }
-        
-        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; }
         .main-button { background: #4a4af4; color: white; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
-        .pts { margin-left: auto; color: #a388ff; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -41,18 +49,20 @@
 
     <div class="swiper-container">
         <div class="swiper-wrapper">
+            <!-- Главная -->
             <div class="swiper-slide">
-                <div class="stats-row">
-                    <div><div class="stat-value">0/15</div><div class="stat-label">ИГРОКИ</div></div>
-                    <div><div class="stat-value">0</div><div class="stat-label">ОЧКИ</div></div>
-                    <div><div class="stat-value">0</div><div class="stat-label">Р4</div></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-val">0/15</div><div class="stat-lbl">Игроки</div></div>
+                    <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Очки</div></div>
+                    <div class="stat-card"><div class="stat-val">0</div><div class="stat-lbl">Р4</div></div>
                 </div>
                 <button class="action-button" onclick="slideTo(1)">УПРАВЛЯТЬ КОМАНДОЙ</button>
                 <div id="timer" class="timer"></div>
-                <h3 onclick="toggleList()" style="cursor:pointer; margin-top: 30px;">Лучшие игроки ▾</h3>
-                <div id="players-list"></div>
+                <h3>Лучшие игроки тура</h3>
+                <div id="players-container"></div>
             </div>
 
+            <!-- Команда -->
             <div class="swiper-slide">
                 <div class="field">
                     <div class="pos-row"><div class="avatar"></div></div>
@@ -69,11 +79,13 @@
                 <div class="info-card">Как начисляются очки?</div>
             </div>
 
+            <!-- Матчи -->
             <div class="swiper-slide">
                 <h3>Матчи</h3>
                 <div id="matches-list"></div>
             </div>
 
+            <!-- Лиги -->
             <div class="swiper-slide">
                 <h3>Публичные лиги</h3>
                 <div class="info-card" onclick="alert('Переход в Global league')">Global league</div>
@@ -94,11 +106,17 @@
         }
         setInterval(updateTimer, 1000); updateTimer();
 
-        const matches = [{d:"28.06", t:"22:00", n:"ЮАР — Канада"}, {d:"29.06", t:"20:00", n:"Бразилия — Япония"}, {d:"01.07", t:"00:00", n:"Франция — Швеция"}];
+        const players = [{name: "К. Мбаппе", team: "Франция", rating: "8.9"}, {name: "Л. Месси", team: "Аргентина", rating: "8.7"}];
+        document.getElementById('players-container').innerHTML = players.map(p => `
+            <div class="player-row">
+                <div class="player-photo"></div>
+                <div class="player-info"><div class="player-name">${p.name}</div><div class="player-team">${p.team}</div></div>
+                <div class="rating">${p.rating}</div>
+            </div>`).join('');
+
+        const matches = [{d:"28.06", t:"22:00", n:"ЮАР — Канада"}, {d:"29.06", t:"20:00", n:"Бразилия — Япония"}];
         document.getElementById('matches-list').innerHTML = matches.map(m => `<div class="row"><div style="color:#888; width:60px">${m.d}<br>${m.t}</div>${m.n}</div>`).join('');
-        
-        const players = [{name:"Месси", pts:"0pts"}, {name:"Винисиус", pts:"0pts"}, {name:"Мбаппе", pts:"0pts"}];
-        document.getElementById('players-list').innerHTML = players.map(p => `<div class="row"><div class="avatar" style="margin-right:15px"></div>${p.name}<div class="pts">${p.pts}</div></div>`).join('');
     </script>
 </body>
-</html>
+    </html>
+    
