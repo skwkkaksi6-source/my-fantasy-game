@@ -12,13 +12,15 @@
         .content { display: none; padding: 15px; }
         .content.active { display: block; }
         
-        /* Поле */
-        .field { background: #28a745; border-radius: 12px; padding: 20px; height: 350px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 15px; }
+        .field { background: #28a745; border-radius: 12px; padding: 20px; height: 350px; display: flex; flex-direction: column; justify-content: space-around; margin-bottom: 15px; }
         .pos-row { display: flex; justify-content: center; gap: 15px; }
         .avatar { width: 40px; height: 40px; background-color: #000; border-radius: 50%; }
         .avatar.sub { background-color: #fff; }
         
-        .main-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        .info-card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .main-button { background: #4a4af4; color: white; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .action-button { background: #fff; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        
         .player-row, .match-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
         .pts { margin-left: auto; color: #a388ff; font-weight: bold; }
     </style>
@@ -35,7 +37,7 @@
             <div style="color: #888;">Раунд 4</div>
             <div style="font-size: 2em; font-weight: bold; margin: 5px 0;">0</div>
             <div style="color: #888; margin-bottom: 20px;">всего очков</div>
-            <button class="main-button">УПРАВЛЯТЬ КОМАНДОЙ</button>
+            <button class="action-button">УПРАВЛЯТЬ КОМАНДОЙ</button>
         </div>
         <h3>Лучшие игроки</h3>
         <div id="players-list"></div>
@@ -49,6 +51,19 @@
             <div class="pos-row"><div class="avatar"></div><div class="avatar"></div><div class="avatar"></div></div>
             <hr style="width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,0.2);">
             <div class="pos-row"><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div><div class="avatar sub"></div></div>
+        </div>
+        
+        <div class="info-card" onclick="alert('Переход к правилам очков')">
+            <span>ⓘ Узнайте, как игроки получают очки</span><span>></span>
+        </div>
+        <div class="info-card" style="display: block; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 5px;">Трансферы</div>
+            <div style="font-size: 0.8em; color: #888;">Планируете трансферы или используете текущий состав?</div>
+            <div style="color: #7b61ff; margin-top: 10px; cursor: pointer;">См. историю трансферов</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="main-button">ЗАМЕНЫ</button>
+            <button class="main-button">ТРАНСФЕРЫ</button>
         </div>
     </div>
 
